@@ -15,7 +15,7 @@ export default function Home() {
         <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
          
           <li className="tracking-[-.01em]">
-            Hola mundo
+            Hola mundo como va todo
           </li>
         </ol>
 
