@@ -24,10 +24,10 @@ jobs:
           lfs: false
 
       - name: Install dependencies
-        run: npm install
+        run: bun install
 
       - name: Build the project
-        run: npm run build
+        run: bun run build
 
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
@@ -35,9 +35,9 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_MUD_0B3F87A1E }}
           action: "upload"
-          app_location: "/" 
-          api_location: "" 
-          output_location: ".next" 
+          app_location: "/"
+          api_location: ""
+          output_location: ".next"
           github_id_token: ${{ steps.idtoken.outputs.result }}
 
   close_pull_request_job:
