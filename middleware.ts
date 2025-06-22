@@ -8,7 +8,7 @@ const privateRoutes = ["/dashboard", "/admin"]; // aquí defines tus rutas prote
 export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
 
-  console.log("Token: ",request.cookies)
+  console.log({ "Token: ": accessToken });
 
   const pathname = request.nextUrl.pathname;
 
