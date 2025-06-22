@@ -2,9 +2,10 @@ import axios from "axios";
 import { refreshAccessToken } from "@/lib/auth";
 
 const api = axios.create({
-  baseURL: process.env.NODE_ENV === "production"
-    ? "https://api.eduadminsoft.shop"
-    : "/api",
+  baseURL:
+    process.env.NODE_ENV === "production"
+      ? "https://api.eduadminsoft.shop"
+      : "/api",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -39,8 +40,17 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // DO NOT try to refresh if the error comes from /auth/login or /auth/register.
+    const isAuthRoute =
+      originalRequest?.url?.includes("/auth/login") ||
+      originalRequest?.url?.includes("/auth/register");
+
     // If response is 401 (Unauthorized) and request hasn't been retried yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isAuthRoute
+    ) {
       // If a token refresh is already in progress, queue the request
       if (isRefreshing) {
         return new Promise((resolve, reject) => {

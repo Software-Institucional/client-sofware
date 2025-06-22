@@ -29,6 +29,8 @@ export function FormWrapper({
     router.push(pathname === "/login/admin" ? "/login" : "/login/admin");
   };
 
+  const showFooter = pathname.startsWith("/login");
+
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md mx-4">
       <div className="pb-8 flex items-center justify-center">
@@ -42,25 +44,29 @@ export function FormWrapper({
       </div>
       {children}
 
-      {/* Divider */}
-      <div className="my-6 text-center">
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
+      {showFooter && (
+        <>
+          {/* Divider */}
+          <div className="my-6 text-center">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-gray-500">O</span>
+              </div>
+            </div>
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-white text-gray-500">O</span>
-          </div>
-        </div>
-      </div>
 
-      {/* Footer */}
-      <div className="mt-6">
-        <Button variant="primaryOutline" onClick={handleRedirect}>
-          <GraduationCap />
-          {footerButtonLabel}
-        </Button>
-      </div>
+          {/* Footer */}
+          <div className="mt-6">
+            <Button variant="primaryOutline" onClick={handleRedirect}>
+              <GraduationCap />
+              {footerButtonLabel}
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

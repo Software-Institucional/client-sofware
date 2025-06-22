@@ -1,15 +1,12 @@
 "use client";
 
 import { z } from "zod";
-import Link from "next/link";
+import api from "@/lib/axios";
 import { toast } from "sonner";
-import { useState } from "react";
 import { AxiosError } from "axios";
-import { Eye, EyeOff, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthStore } from "@/stores/auth-store";
 
 import {
   Form,
@@ -19,7 +16,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import api from "@/lib/axios";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormWrapper } from "@/components/auth/form-wrapper";
@@ -27,37 +23,30 @@ import { AnimatedInputWrapper } from "@/components/auth/animated-input-wrapper";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Correo inválido." }),
-  password: z.string().min(1, { message: "La contraseña es obligatoria." }),
 });
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+type ForgotPasswordFormValues = z.infer<typeof loginSchema>;
 
-export default function AdminLoginPage() {
-  const router = useRouter();
-
-  const [showPassword, setShowPassword] = useState(false);
-
-  const form = useForm<LoginFormValues>({
+export default function ForgotPasswordPage() {
+  const form = useForm<ForgotPasswordFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
   const { isSubmitting, isValid } = form.formState;
 
-  const setUser = useAuthStore((state) => state.setUser);
-
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data: ForgotPasswordFormValues) => {
     try {
-      const response = await api.post("/auth/login", data);
+      const response = await api.post("/auth/forgot-password", data);
 
-      const result = response.data;
-      setUser(result.user);
-
-      router.replace("/dashboard");
-      form.reset();
+      if (response.status === 200) {
+        toast.success(
+          "Correo enviado. Por favor, revisa tu bandeja de entrada."
+        );
+        form.reset();
+      }
     } catch (error) {
       if (error instanceof AxiosError) {
         const status = error.response?.status;
@@ -67,7 +56,7 @@ export default function AdminLoginPage() {
 
         if (status === 401) {
           toast.error(
-            "Credenciales no válidas. Por favor, compruebe su correo electrónico y contraseña."
+            "Credenciales no válidas. Por favor, compruebe su correo electrónico."
           );
         } else if (status === 500) {
           toast.error("Error de servidor. Vuelva a intentarlo más tarde.");
@@ -84,8 +73,8 @@ export default function AdminLoginPage() {
 
   return (
     <FormWrapper
-      title="Ingresar como administrador"
-      description="Accede a tu cuenta de administrador para gestionar la plataforma."
+      title="Recuperar Contraseña"
+      description="Ingresa tu email y te enviaremos un correo para restablecer tu contraseña."
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
@@ -112,54 +101,13 @@ export default function AdminLoginPage() {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <AnimatedInputWrapper
-                    hasValue={Boolean(field.value)}
-                    placeholder="Contraseña"
-                  >
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Contraseña"
-                      className="peer input-animated pr-10"
-                      {...field}
-                    />
-                    {showPassword ? (
-                      <EyeOff
-                        onClick={() => setShowPassword(false)}
-                        className="input-icon-toggle"
-                      />
-                    ) : (
-                      <Eye
-                        onClick={() => setShowPassword(true)}
-                        className="input-icon-toggle"
-                      />
-                    )}
-                  </AnimatedInputWrapper>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Link
-            href="/forgot-password"
-            className="block text-sm text-muted-foreground hover:underline hover:text-primary transition-colors w-fit ml-auto"
-          >
-            ¿Olvidaste tu contraseña?
-          </Link>
-
           <Button
             type="submit"
             variant="primary"
             disabled={!isValid || isSubmitting}
           >
             {isSubmitting && <Loader className="animate-spin" />}
-            Iniciar sesión
+            Enviar
           </Button>
         </form>
       </Form>

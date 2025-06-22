@@ -42,7 +42,7 @@ export function middleware(request: NextRequest) {
   // User NOT logged in tries to access a private route
   if (!accessToken && isPrivateRoute) {
     console.log("Redirigiendo a /login/admin");
-    return NextResponse.redirect(new URL("/login/admin", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   console.log("No se necesita redirección.");

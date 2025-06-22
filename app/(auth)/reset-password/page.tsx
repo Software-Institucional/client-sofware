@@ -1,15 +1,14 @@
 "use client";
 
 import { z } from "zod";
-import Link from "next/link";
 import { toast } from "sonner";
 import { useState } from "react";
 import { AxiosError } from "axios";
 import { Eye, EyeOff, Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthStore } from "@/stores/auth-store";
 
 import {
   Form,
@@ -24,40 +23,61 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormWrapper } from "@/components/auth/form-wrapper";
 import { AnimatedInputWrapper } from "@/components/auth/animated-input-wrapper";
+import { PasswordRequirements } from "@/components/auth/password-requirements";
 
-const loginSchema = z.object({
-  email: z.string().email({ message: "Correo inválido." }),
-  password: z.string().min(1, { message: "La contraseña es obligatoria." }),
-});
+const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
+      .regex(/[a-z]/, { message: "Debe contener al menos una letra minúscula" })
+      .regex(/[A-Z]/, { message: "Debe contener al menos una letra mayúscula" })
+      .regex(/[0-9]/, { message: "Debe contener al menos un número" })
+      .regex(/[^a-zA-Z0-9]/, {
+        message: "Debe contener al menos un carácter especial",
+      }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+  });
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
 
-export default function AdminLoginPage() {
+export default function ResetPasswordPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const token = searchParams.get("token");
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<ResetPasswordForm>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
   const { isSubmitting, isValid } = form.formState;
 
-  const setUser = useAuthStore((state) => state.setUser);
-
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data: ResetPasswordForm) => {
     try {
-      const response = await api.post("/auth/login", data);
+      const payload = {
+        token,
+        newPassword: data.password,
+      };
 
-      const result = response.data;
-      setUser(result.user);
+      const response = await api.post("/auth/reset-password", payload);
 
-      router.replace("/dashboard");
-      form.reset();
+      if (response.status === 200) {
+        toast.success("Contraseña actualizada correctamente.");
+        router.push("/login");
+        form.reset();
+      }
     } catch (error) {
       if (error instanceof AxiosError) {
         const status = error.response?.status;
@@ -67,7 +87,7 @@ export default function AdminLoginPage() {
 
         if (status === 401) {
           toast.error(
-            "Credenciales no válidas. Por favor, compruebe su correo electrónico y contraseña."
+            "Credenciales no válidas. Por favor, vuelve a generar un nuevo token."
           );
         } else if (status === 500) {
           toast.error("Error de servidor. Vuelva a intentarlo más tarde.");
@@ -84,34 +104,11 @@ export default function AdminLoginPage() {
 
   return (
     <FormWrapper
-      title="Ingresar como administrador"
-      description="Accede a tu cuenta de administrador para gestionar la plataforma."
+      title="Establecer Nueva Contraseña"
+      description="Crea una contraseña segura para proteger tu cuenta."
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <AnimatedInputWrapper
-                    hasValue={Boolean(field.value)}
-                    placeholder="Correo electrónico"
-                  >
-                    <Input
-                      type="email"
-                      placeholder="Correo electrónico"
-                      className="peer input-animated"
-                      {...field}
-                    />
-                  </AnimatedInputWrapper>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="password"
@@ -120,11 +117,11 @@ export default function AdminLoginPage() {
                 <FormControl>
                   <AnimatedInputWrapper
                     hasValue={Boolean(field.value)}
-                    placeholder="Contraseña"
+                    placeholder="Nueva contraseña"
                   >
                     <Input
                       type={showPassword ? "text" : "password"}
-                      placeholder="Contraseña"
+                      placeholder="Nueva contraseña"
                       className="peer input-animated pr-10"
                       {...field}
                     />
@@ -146,12 +143,41 @@ export default function AdminLoginPage() {
             )}
           />
 
-          <Link
-            href="/forgot-password"
-            className="block text-sm text-muted-foreground hover:underline hover:text-primary transition-colors w-fit ml-auto"
-          >
-            ¿Olvidaste tu contraseña?
-          </Link>
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <AnimatedInputWrapper
+                    hasValue={Boolean(field.value)}
+                    placeholder="Confirmar contraseña"
+                  >
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirmar contraseña"
+                      className="peer input-animated pr-10"
+                      {...field}
+                    />
+                    {showConfirmPassword ? (
+                      <EyeOff
+                        onClick={() => setShowConfirmPassword(false)}
+                        className="input-icon-toggle"
+                      />
+                    ) : (
+                      <Eye
+                        onClick={() => setShowConfirmPassword(true)}
+                        className="input-icon-toggle"
+                      />
+                    )}
+                  </AnimatedInputWrapper>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <PasswordRequirements password={form.watch("password") || ""} />
 
           <Button
             type="submit"
@@ -159,7 +185,7 @@ export default function AdminLoginPage() {
             disabled={!isValid || isSubmitting}
           >
             {isSubmitting && <Loader className="animate-spin" />}
-            Iniciar sesión
+            Actualizar contraseña
           </Button>
         </form>
       </Form>

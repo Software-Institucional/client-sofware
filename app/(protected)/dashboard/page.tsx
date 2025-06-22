@@ -14,7 +14,7 @@ export default function DashboardPage() {
         onClick={async () => {
           try {
             await api.get("/auth/logout");
-            router.replace("/login/admin");
+            router.replace("/login");
           } catch (error) {
             console.log(error);
             toast.error(
