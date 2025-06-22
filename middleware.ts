@@ -6,9 +6,20 @@ const publicRoutes = ["/login", "/login/admin"];
 const privateRoutes = ["/dashboard", "/admin"]; // aquí defines tus rutas protegidas
 
 export function middleware(request: NextRequest) {
-  const accessToken = request.cookies.get("accessToken")?.value;
+  // --- INICIO DEBUG EN PRODUCCIÓN ---
+  console.log("--- Middleware Executing on:", request.url);
 
-  console.log({ "Token: ": accessToken });
+  // Intenta obtener el accessToken
+  const accessToken = request.cookies.get("accessToken")?.value;
+  console.log(
+    "AccessToken from cookies:",
+    accessToken ? "ENCONTRADO" : "NO ENCONTRADO"
+  );
+
+  // Muestra todas las cookies que el middleware puede ver
+  const allCookies = request.cookies.getAll();
+  console.log("Todas las cookies visibles:", JSON.stringify(allCookies, null, 2));
+  // --- FIN DEBUG EN PRODUCCIÓN ---
 
   const pathname = request.nextUrl.pathname;
 
@@ -19,14 +30,17 @@ export function middleware(request: NextRequest) {
 
   // Usuario logueado intenta ir a login → lo mandamos al dashboard
   if (accessToken && isPublicRoute) {
+    console.log("Redirigiendo a /dashboard");
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   // Usuario NO logueado intenta acceder a una ruta privada
   if (!accessToken && isPrivateRoute) {
+    console.log("Redirigiendo a /login/admin");
     return NextResponse.redirect(new URL("/login/admin", request.url));
   }
 
+  console.log("No se necesita redirección.");
   return NextResponse.next();
 }
 
