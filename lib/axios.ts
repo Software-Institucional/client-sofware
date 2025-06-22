@@ -1,8 +1,10 @@
 import axios from "axios";
 import { refreshAccessToken } from "@/lib/auth";
 
+let BackendUrl = process.env.NODE_ENV || "https://api.eduadminsoft.shop";
+
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: BackendUrl,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
