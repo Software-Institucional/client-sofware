@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
       const result = response.data;
       setUser(result.user);
 
-      // router.push("/");
+      router.replace("/dashboard");
       form.reset();
     } catch (error) {
       if (error instanceof AxiosError) {
