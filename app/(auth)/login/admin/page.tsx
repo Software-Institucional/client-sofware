@@ -1,10 +1,13 @@
 "use client";
 
 import { z } from "zod";
+import Link from "next/link";
 import { toast } from "sonner";
+import { useState } from "react";
 import { AxiosError } from "axios";
-import { Loader } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "@/stores/auth-store";
 
@@ -13,24 +16,26 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 
 import api from "@/lib/axios";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { FormWrapper } from "@/components/auth/form-wrapper";
+import { AnimatedInputWrapper } from "@/components/auth/animated-input-wrapper";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Correo inválido." }),
-  password: z.string(),
+  password: z.string().min(1, { message: "La contraseña es obligatoria." }),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function AdminLoginPage() {
   const router = useRouter();
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -78,52 +83,86 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 max-w-md mx-auto"
-      >
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Correo electrónico</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="tu-correo@ejemplo.com"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <FormWrapper
+      title="Ingresar como administrador"
+      description="Accede a tu cuenta de administrador para gestionar la plataforma."
+    >
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <AnimatedInputWrapper
+                    hasValue={Boolean(field.value)}
+                    placeholder="Correo electrónico"
+                  >
+                    <Input
+                      type="email"
+                      placeholder="Correo electrónico"
+                      className="peer input-animated"
+                      {...field}
+                    />
+                  </AnimatedInputWrapper>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Contraseña</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="********" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <AnimatedInputWrapper
+                    hasValue={Boolean(field.value)}
+                    placeholder="Contraseña"
+                  >
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Contraseña"
+                      className="peer input-animated pr-10"
+                      {...field}
+                    />
+                    {showPassword ? (
+                      <EyeOff
+                        onClick={() => setShowPassword(false)}
+                        className="input-icon-toggle"
+                      />
+                    ) : (
+                      <Eye
+                        onClick={() => setShowPassword(true)}
+                        className="input-icon-toggle"
+                      />
+                    )}
+                  </AnimatedInputWrapper>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <Button
-          type="submit"
-          disabled={!isValid || isSubmitting}
-          className="w-full"
-        >
-          {isSubmitting && <Loader className="animate-spin" />}
-          Iniciar sesión
-        </Button>
-      </form>
-    </Form>
+          <Link
+            href="/login/admin/forgot-password"
+            className="block text-sm text-muted-foreground hover:underline hover:text-primary transition-colors w-fit ml-auto"
+          >
+            ¿Olvidaste tu contraseña?
+          </Link>
+
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={!isValid || isSubmitting}
+          >
+            {isSubmitting && <Loader className="animate-spin" />}
+            Iniciar sesión
+          </Button>
+        </form>
+      </Form>
+    </FormWrapper>
   );
 }

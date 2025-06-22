@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Rutas públicas que NO deben verse si el usuario ya está logueado
+// Public routes that should NOT be seen if the user is already logged in.
 const publicRoutes = ["/login", "/login/admin"];
-const privateRoutes = ["/dashboard", "/admin"]; // aquí defines tus rutas protegidas
+
+// Private routes that require authentication.
+const privateRoutes = ["/dashboard", "/admin"];
 
 export function middleware(request: NextRequest) {
   // --- INICIO DEBUG EN PRODUCCIÓN ---
@@ -16,9 +18,12 @@ export function middleware(request: NextRequest) {
     accessToken ? "ENCONTRADO" : "NO ENCONTRADO"
   );
 
-  // Muestra todas las cookies que el middleware puede ver
+  // Displays all cookies that the middleware can see
   const allCookies = request.cookies.getAll();
-  console.log("Todas las cookies visibles:", JSON.stringify(allCookies, null, 2));
+  console.log(
+    "Todas las cookies visibles:",
+    JSON.stringify(allCookies, null, 2)
+  );
   // --- FIN DEBUG EN PRODUCCIÓN ---
 
   const pathname = request.nextUrl.pathname;
@@ -28,13 +33,13 @@ export function middleware(request: NextRequest) {
     pathname.startsWith(route)
   );
 
-  // Usuario logueado intenta ir a login → lo mandamos al dashboard
+  // Logged in user tries to go to login → send to dashboard
   if (accessToken && isPublicRoute) {
     console.log("Redirigiendo a /dashboard");
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // Usuario NO logueado intenta acceder a una ruta privada
+  // User NOT logged in tries to access a private route
   if (!accessToken && isPrivateRoute) {
     console.log("Redirigiendo a /login/admin");
     return NextResponse.redirect(new URL("/login/admin", request.url));
