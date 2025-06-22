@@ -8,23 +8,8 @@ const publicRoutes = ["/login", "/login/admin"];
 const privateRoutes = ["/dashboard", "/admin"];
 
 export function middleware(request: NextRequest) {
-  // --- INICIO DEBUG EN PRODUCCIÓN ---
-  console.log("--- Middleware Executing on:", request.url);
-
   // Intenta obtener el accessToken
   const accessToken = request.cookies.get("accessToken")?.value;
-  console.log(
-    "AccessToken from cookies:",
-    accessToken ? "ENCONTRADO" : "NO ENCONTRADO"
-  );
-
-  // Displays all cookies that the middleware can see
-  const allCookies = request.cookies.getAll();
-  console.log(
-    "Todas las cookies visibles:",
-    JSON.stringify(allCookies, null, 2)
-  );
-  // --- FIN DEBUG EN PRODUCCIÓN ---
 
   const pathname = request.nextUrl.pathname;
 
@@ -50,5 +35,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/login/admin", "/dashboard/:path*", "/admin/:path*"],
+  matcher: [
+    "/((?!_next|favicon.ico|api|static|public).*)",
+  ],
 };
