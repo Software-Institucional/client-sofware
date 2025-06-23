@@ -9,7 +9,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 relative overflow-hidden py-12">
       {/* Simplified decorative elements */}
       <div className="absolute top-32 left-8 w-12 h-12 bg-blue-100 rounded-full opacity-40" />
       <div className="absolute top-48 left-32 w-6 h-6 border-2 border-blue-200 rounded-full" />
