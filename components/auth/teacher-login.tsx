@@ -38,7 +38,10 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export function TeacherLogin({ school, handleBackToSearch }: TeacherLoginProps) {
+export function TeacherLogin({
+  school,
+  handleBackToSearch,
+}: TeacherLoginProps) {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -97,6 +100,7 @@ export function TeacherLogin({ school, handleBackToSearch }: TeacherLoginProps) 
   return (
     <FormWrapper
       showBackButton
+      schoolLogoUrl={school.imgUrl}
       backButtonClick={handleBackToSearch}
       title={school.name}
       description="Ingresa tus credenciales para acceder al sistema educativo."

@@ -5,11 +5,13 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { Logo } from "@/components/common/logo";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 interface FormWrapperProps {
   title: string;
   description?: string;
   showBackButton?: boolean;
+  schoolLogoUrl?: string;
   backButtonClick?: () => void;
   children?: React.ReactNode;
 }
@@ -17,6 +19,7 @@ interface FormWrapperProps {
 export function FormWrapper({
   title,
   description,
+  schoolLogoUrl,
   showBackButton,
   children,
   backButtonClick,
@@ -37,9 +40,21 @@ export function FormWrapper({
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md mx-4">
-      <div className="pb-8 flex items-center justify-center">
-        <Logo column showName />
-      </div>
+      {!schoolLogoUrl && (
+        <div className="pb-8 flex items-center justify-center">
+          <Logo column showName />
+        </div>
+      )}
+      {schoolLogoUrl && (
+        <div className="relative size-20 mx-auto mb-3 rounded-lg overflow-hidden">
+          <Image
+            src={schoolLogoUrl}
+            alt={`Escudo del colegio`}
+            fill
+            className="object-contain"
+          />
+        </div>
+      )}
       <div className="flex flex-col items-center justify-center text-center mb-8">
         <h2 className="text-xl sm:text-2xl tracking-tight font-bold text-black mb-2">
           {title}
