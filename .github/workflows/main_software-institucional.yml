@@ -33,10 +33,10 @@ jobs:
         run: |
           mkdir -p output
           cp -r .next/standalone/* output/
-          cp -r .next/static output/.next/static
+          mkdir -p output/.next/static
+          cp -r .next/static/* output/.next/static
           cp -r public output/public || true
           zip -r release.zip output
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
