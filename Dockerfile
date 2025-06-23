@@ -21,3 +21,5 @@ EXPOSE 3000
 # Start
 CMD ["bun", "start"]
 
+### mensaje de bienvenida
+# RUN echo "Hello World"
