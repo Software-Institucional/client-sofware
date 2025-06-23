@@ -21,5 +21,3 @@ EXPOSE 3000
 # Start
 CMD ["bun", "start"]
 
-
-
