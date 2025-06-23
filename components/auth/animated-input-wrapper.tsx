@@ -16,9 +16,9 @@ export function AnimatedInputWrapper({
       {children}
       <label
         className={cn(
-          "pointer-events-none absolute cursor-text px-1 left-2.5 top-2.5 text-sm text-transparent transition-all peer-focus:text-muted-foreground transform origin-left peer-focus:bg-white peer-focus:-top-2 peer-focus:left-2.5 peer-focus:text-xs peer-focus:scale-90 rounded-sm",
+          "pointer-events-none absolute cursor-text px-1 left-2.5 top-2.5 text-sm text-transparent transition-all peer-focus:text-muted-foreground transform origin-left peer-focus:bg-white dark:peer-focus:bg-neutral-800 peer-focus:-top-2 peer-focus:left-2.5 peer-focus:text-xs peer-focus:scale-90 rounded-sm",
           hasValue &&
-            "text-muted-foreground -top-2 left-2.5 text-xs scale-90 bg-white"
+            "text-muted-foreground -top-2 left-2.5 text-xs scale-90 bg-white dark:bg-neutral-800"
         )}
       >
         {placeholder}

@@ -14,7 +14,7 @@ interface SchoolCardProps {
 export function SchoolCard({ school, index, onSelect }: SchoolCardProps) {
   return (
     <motion.div
-      className="bg-white rounded-lg shadow-md hover:shadow-lg border border-gray-100 cursor-pointer overflow-hidden transition-all"
+      className="bg-transparent rounded-lg shadow-md hover:shadow-lg border cursor-pointer overflow-hidden transition-all"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3, delay: index * 0.05, ease: "linear" }}
@@ -32,11 +32,11 @@ export function SchoolCard({ school, index, onSelect }: SchoolCardProps) {
           />
         </div>
 
-        <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight">
+        <h3 className="text-sm font-semibold mb-1 line-clamp-2 leading-tight">
           {school.name}
         </h3>
 
-        <p className="text-xs text-gray-500 capitalize mb-2">
+        <p className="text-xs text-gray-500 dark:text-gray-400/80 capitalize mb-2">
           {school.municipality}
         </p>
       </div>
