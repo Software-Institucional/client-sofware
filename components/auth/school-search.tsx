@@ -101,33 +101,6 @@ export function SchoolSearch({ onSchoolSelect }: SchoolSearchProps) {
                 />
               </div>
 
-              {/* Filters - Desktop */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Departamento
-                  </label>
-                  <select className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                    <option value="">Todos los departamentos</option>
-                    <option value="meta">Meta</option>
-                    <option value="cundinamarca">Cundinamarca</option>
-                    <option value="bogota">Bogotá D.C.</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Municipio
-                  </label>
-                  <select className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                    <option value="">Todos los municipios</option>
-                    <option value="villavicencio">Villavicencio</option>
-                    <option value="acacias">Acacías</option>
-                    <option value="granada">Granada</option>
-                  </select>
-                </div>
-              </div>
-
               {/* Stats */}
               <div className="mt-8 p-4 bg-blue-50 rounded-lg">
                 <h4 className="text-sm font-medium text-blue-900 mb-2">
