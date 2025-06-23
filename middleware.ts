@@ -2,10 +2,15 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Public routes that should NOT be seen if the user is already logged in.
-const publicRoutes = ["/login", "/login/admin", "/reset-password", "/dashboard"];
+const publicRoutes = [
+  "/login",
+  "/login/admin",
+  "/reset-password",
+  "/dashboard",
+];
 
 // Private routes that require authentication.
-const privateRoutes = ["/admin"];
+const privateRoutes = ["/dashboard", "/config", "/admin"];
 
 export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
