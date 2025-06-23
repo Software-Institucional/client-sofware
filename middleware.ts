@@ -6,7 +6,6 @@ const publicRoutes = [
   "/login",
   "/login/admin",
   "/reset-password",
-  "/dashboard",
 ];
 
 // Private routes that require authentication.

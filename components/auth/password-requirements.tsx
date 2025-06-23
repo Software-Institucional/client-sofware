@@ -70,13 +70,13 @@ function RequirementItem({
         }`}
         animate={{
           scale: isValid ? [1, 1.3, 1] : 1,
-          backgroundColor: isValid ? "#10b981" : "#d1d5db",
+          backgroundColor: isValid ? "#10b981" : undefined,
         }}
         transition={{ duration: 0.3 }}
       />
       <motion.span
         animate={{
-          color: isValid ? "#059669" : "#374151",
+          color: isValid ? "#059669" : "#737373",
         }}
         transition={{ duration: 0.3 }}
       >
@@ -110,15 +110,15 @@ function RequirementItem({
 export function PasswordRequirements({ password }: PasswordRequirementsProps) {
   return (
     <motion.div
-      className="bg-blue-50 p-4 rounded-lg"
+      className="bg-blue-50 dark:bg-blue-600/20 p-4 rounded-lg"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <p className="text-sm font-medium text-blue-800 mb-2">
+      <p className="text-sm font-medium text-blue-800 dark:text-blue-400 mb-2">
         Requisitos de la contraseña:
       </p>
-      <ul className="text-xs text-blue-700 space-y-2">
+      <ul className="text-xs text-blue-700 dark:text-blue-400 space-y-2">
         {requirements.map((requirement) => (
           <RequirementItem
             key={requirement.id}
