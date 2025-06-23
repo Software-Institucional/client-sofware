@@ -4,6 +4,7 @@ import React, { useState } from "react";
 
 import { School } from "@/types/school";
 import { SchoolSearch } from "@/components/auth/school-search";
+import { TeacherLogin } from "@/components/auth/teacher-login";
 
 type ViewState = "search" | "login" | "forgot-password";
 
@@ -24,10 +25,15 @@ export default function LoginPage() {
   return (
     <>
       {currentView === "search" && (
-        <SchoolSearch onSchoolSelect={handleSchoolSelect} onBack={() => {}} />
+        <SchoolSearch onSchoolSelect={handleSchoolSelect} />
       )}
 
-      {currentView === "login" && selectedSchool && <div>login</div>}
+      {currentView === "login" && selectedSchool && (
+        <TeacherLogin
+          school={selectedSchool}
+          handleBackToSearch={handleBackToSearch}
+        />
+      )}
     </>
   );
 }

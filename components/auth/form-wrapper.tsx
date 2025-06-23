@@ -1,6 +1,6 @@
 "use client";
 
-import { GraduationCap } from "lucide-react";
+import { ArrowLeft, GraduationCap } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { Logo } from "@/components/common/logo";
@@ -9,13 +9,17 @@ import { Button } from "@/components/ui/button";
 interface FormWrapperProps {
   title: string;
   description?: string;
+  showBackButton?: boolean;
+  backButtonClick?: () => void;
   children?: React.ReactNode;
 }
 
 export function FormWrapper({
   title,
   description,
+  showBackButton,
   children,
+  backButtonClick,
 }: FormWrapperProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -29,7 +33,7 @@ export function FormWrapper({
     router.push(pathname === "/login/admin" ? "/login" : "/login/admin");
   };
 
-  const showFooter = pathname.startsWith("/login");
+  const showFooter = pathname.startsWith("/login/admin");
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md mx-4">
@@ -37,13 +41,24 @@ export function FormWrapper({
         <Logo column showName />
       </div>
       <div className="flex flex-col items-center justify-center text-center mb-8">
-        <h2 className="text-2xl sm:text-[28px] tracking-tight font-bold text-black mb-2">
+        <h2 className="text-xl sm:text-2xl tracking-tight font-bold text-black mb-2">
           {title}
         </h2>
         <p className="text-gray-600 max-w-xs">{description}</p>
       </div>
       {children}
 
+      {/* back button */}
+      {showBackButton && (
+        <div className="mt-6">
+          <Button variant="primaryOutline" onClick={backButtonClick}>
+            <ArrowLeft />
+            Volver
+          </Button>
+        </div>
+      )}
+
+      {/* Footer section */}
       {showFooter && (
         <>
           {/* Divider */}

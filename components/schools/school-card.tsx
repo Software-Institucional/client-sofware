@@ -22,22 +22,20 @@ export function SchoolCard({ school, index, onSelect }: SchoolCardProps) {
       onClick={() => onSelect(school)}
     >
       <div className="p-4 text-center">
-        {/* Escudo prominente */}
-        <div className="relative size-24 mx-auto mb-3 rounded-lg overflow-hidden bg-gray-100">
+        {/* School logo */}
+        <div className="relative size-24 mx-auto mb-3 rounded-lg overflow-hidden">
           <Image
             src={school.imgUrl}
             alt={`Escudo de ${school.name}`}
             fill
-            className="object-cover"
+            className="object-contain"
           />
         </div>
 
-        {/* Nombre del colegio */}
         <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-2 leading-tight">
           {school.name}
         </h3>
 
-        {/* Ubicación */}
         <p className="text-xs text-gray-500 capitalize mb-2">
           {school.municipality}
         </p>

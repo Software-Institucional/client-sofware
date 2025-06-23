@@ -1,7 +1,4 @@
-import Link from "next/link";
 import Image from "next/image";
-
-import { platformName } from "@/constants";
 
 export default function AuthLayout({
   children,
@@ -9,7 +6,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 relative overflow-hidden py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 relative overflow-hidden">
       {/* Simplified decorative elements */}
       <div className="absolute top-32 left-8 w-12 h-12 bg-blue-100 rounded-full opacity-40" />
       <div className="absolute top-48 left-32 w-6 h-6 border-2 border-blue-200 rounded-full" />
@@ -28,16 +25,8 @@ export default function AuthLayout({
         </div>
       </div>
 
-      <div className="flex flex-col justify-center items-center min-h-[100dvh] z-10 relative">
+      <div className="flex flex-col justify-center items-center min-h-[90dvh] z-10 relative p-4">
         {children}
-
-        {/* Footer */}
-        <footer className="text-center py-4 text-sm text-gray-600">
-          Copyright @{platformName} {new Date().getFullYear()} |
-          <Link href="#" className="hover:underline ml-1">
-            Politicas de privacidad
-          </Link>
-        </footer>
       </div>
     </div>
   );
