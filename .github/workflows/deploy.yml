@@ -1,0 +1,60 @@
+name: Deploy Frontend with Bun + Docker on EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: 18.207.216.139
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Instalar unzip, bun y docker
+            sudo apt-get update
+            sudo apt-get install -y unzip curl docker.io nginx
+
+            # Instalar Bun si no está
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            if ! command -v bun &> /dev/null; then
+              curl -fsSL https://bun.sh/install | bash
+              export PATH="$HOME/.bun/bin:$PATH"
+            fi
+
+            # Clonar repo si no existe
+            if [ ! -d "/home/ubuntu/client-sofware" ]; then
+              git clone https://github.com/Software-Institucional/client-sofware.git /home/ubuntu/client-sofware
+            fi
+
+            cd /home/ubuntu/client-sofware
+
+            # Pull de main
+            git pull origin main
+
+            # Instalar deps y build con Bun
+            bun install
+            bun run build
+
+            # Build Docker image
+            sudo docker build -t frontend-app .
+
+            # Parar y eliminar container viejo
+            sudo docker stop frontend || true
+            sudo docker rm frontend || true
+
+            # Correr container
+            sudo docker run -d --name frontend -p 3000:3000 frontend-app
+
+            # Reiniciar nginx
+            sudo systemctl restart nginx || true
