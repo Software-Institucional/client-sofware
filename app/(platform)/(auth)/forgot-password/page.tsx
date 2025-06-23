@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -28,6 +29,8 @@ const loginSchema = z.object({
 type ForgotPasswordFormValues = z.infer<typeof loginSchema>;
 
 export default function ForgotPasswordPage() {
+  const router = useRouter();
+
   const form = useForm<ForgotPasswordFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -73,6 +76,8 @@ export default function ForgotPasswordPage() {
 
   return (
     <FormWrapper
+      showBackButton
+      backButtonClick={() => router.back()}
       title="Recuperar Contraseña"
       description="Ingresa tu email y te enviaremos un correo para restablecer tu contraseña."
     >

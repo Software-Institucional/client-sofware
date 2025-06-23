@@ -5,7 +5,7 @@ const api = axios.create({
   baseURL:
     process.env.NODE_ENV === "production"
       ? "https://api.eduadminsoft.shop"
-      : "/api",
+      : "/",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

@@ -27,8 +27,8 @@ export function middleware(request: NextRequest) {
 
   // Si el usuario NO está logueado e intenta ir a una ruta privada → redirigir a login
   if (!accessToken && isPrivateRoute) {
-    console.log("Redirigiendo a /login/admin");
-    return NextResponse.redirect(new URL("/login/admin", request.url));
+    console.log("Redirigiendo a /login");
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   console.log("No se necesita redirección.");
