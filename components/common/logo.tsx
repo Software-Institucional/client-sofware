@@ -7,9 +7,16 @@ import { platformName } from "@/constants";
 interface LogoProps {
   column?: boolean;
   showName?: boolean;
+  logoClassname?: string;
+  labelClassname?: string;
 }
 
-export function Logo({ showName, column }: LogoProps) {
+export function Logo({
+  showName,
+  column,
+  logoClassname,
+  labelClassname,
+}: LogoProps) {
   return (
     <div className={cn("flex items-center gap-3", column && "flex-col")}>
       <Image
@@ -17,10 +24,12 @@ export function Logo({ showName, column }: LogoProps) {
         alt="Logo"
         width={40}
         height={40}
-        className="h-10 w-auto obcject-contain"
+        className={cn("h-10 w-auto obcject-contain", logoClassname)}
       />
       {showName && (
-        <span className="text-2xl font-bold text-black">{platformName} </span>
+        <span className={cn("text-2xl font-bold text-primary", labelClassname)}>
+          {platformName}{" "}
+        </span>
       )}
     </div>
   );

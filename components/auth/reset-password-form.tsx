@@ -194,9 +194,9 @@ function ResetPasswordFormComponent() {
 }
 
 export default function ResetPasswordForm() {
-    return (
-        <Suspense fallback={<div>Cargando...</div>}>
-            <ResetPasswordFormComponent />
-        </Suspense>
-    )
-} 
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <ResetPasswordFormComponent />
+    </Suspense>
+  );
+}

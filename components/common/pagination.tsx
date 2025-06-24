@@ -51,8 +51,8 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         disabled={currentPage === 1}
         className={`p-2 rounded-lg border transition-colors ${
           currentPage === 1
-            ? "border-gray-200 text-gray-400 cursor-not-allowed"
-            : "border-gray-300 text-gray-600 hover:bg-gray-50 hover:border-gray-400"
+            ? "text-gray-400 cursor-not-allowed"
+            : "text-gray-600 hover:bg-gray-50 hover:border-gray-400"
         }`}
         whileHover={currentPage !== 1 ? { scale: 1.05 } : {}}
         whileTap={currentPage !== 1 ? { scale: 0.95 } : {}}
@@ -93,8 +93,8 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         disabled={currentPage === totalPages}
         className={`p-2 rounded-lg border transition-colors ${
           currentPage === totalPages
-            ? "border-gray-200 text-gray-400 cursor-not-allowed"
-            : "border-gray-300 text-gray-600 hover:bg-gray-50 hover:border-gray-400"
+            ? "text-gray-400 cursor-not-allowed"
+            : "text-gray-600 hover:bg-gray-50 hover:border-gray-400"
         }`}
         whileHover={currentPage !== totalPages ? { scale: 1.05 } : {}}
         whileTap={currentPage !== totalPages ? { scale: 0.95 } : {}}

@@ -44,21 +44,21 @@ export function SchoolSearch({ onSchoolSelect }: SchoolSearchProps) {
 
   return (
     <motion.div
-      className="w-full max-w-xl lg:max-w-6xl min-w-full"
+      className="w-full max-w-xl lg:max-w-6xl"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg overflow-hidden">
         {/* Header - Only movile */}
         <div className="text-center my-6 pt-8 block lg:hidden">
           <div className="flex justify-center pb-10">
             <Logo showName column />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-2">
             Selecciona tu Colegio
           </h2>
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 dark:text-accent-foreground/45 text-sm">
             Busca y selecciona la institución educativa
             <br />
             donde trabajas como docente
@@ -73,21 +73,19 @@ export function SchoolSearch({ onSchoolSelect }: SchoolSearchProps) {
             placeholder="Nombre del colegio..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-12"
+            className="pl-12 bg-accent"
           />
         </div>
 
         <div className="lg:grid lg:grid-cols-12">
           {/* Left panel - Only desktop */}
-          <div className="hidden lg:block lg:col-span-4 xl:col-span-3 bg-gray-50 p-6">
+          <div className="hidden lg:block lg:col-span-4 xl:col-span-3 bg-gray-50 dark:bg-neutral-700 p-6">
             <div className="sticky top-6">
               <div className="pb-10">
                 <Logo showName column={false} />
               </div>
 
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Buscar Institución
-              </h3>
+              <h3 className="text-lg font-semibold mb-4">Buscar Institución</h3>
 
               {/* Search input - Desktop */}
               <div className="relative mb-6">
@@ -97,22 +95,22 @@ export function SchoolSearch({ onSchoolSelect }: SchoolSearchProps) {
                   placeholder="Nombre del colegio..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12"
+                  className="pl-12 bg-white"
                 />
               </div>
 
               {/* Stats */}
-              <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-                <h4 className="text-sm font-medium text-blue-900 mb-2">
+              <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-500/20 rounded-lg">
+                <h4 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
                   Resultados
                 </h4>
-                <p className="text-sm text-blue-700">
+                <p className="text-sm text-blue-700 dark:text-blue-400">
                   {schools.length} colegio{schools.length !== 1 ? "s" : ""}{" "}
                   encontrado
                   {schools.length !== 1 ? "s" : ""}
                 </p>
                 {totalPages > 1 && (
-                  <p className="text-xs text-blue-600 mt-1">
+                  <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
                     Página {currentPage} de {totalPages}
                   </p>
                 )}
@@ -124,7 +122,7 @@ export function SchoolSearch({ onSchoolSelect }: SchoolSearchProps) {
           <div className="lg:col-span-8 xl:col-span-9 p-6 lg:p-8">
             {/* Information about results - Only mobile */}
             <div className="lg:hidden flex justify-between items-center mb-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-accent-foreground/45">
                 {schools.length > 0
                   ? `${schools.length} colegio${
                       schools.length !== 1 ? "s" : ""
@@ -132,7 +130,7 @@ export function SchoolSearch({ onSchoolSelect }: SchoolSearchProps) {
                   : "No se encontraron colegios"}
               </p>
               {totalPages > 1 && (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-accent-foreground/45">
                   Página {currentPage} de {totalPages}
                 </p>
               )}
@@ -140,10 +138,10 @@ export function SchoolSearch({ onSchoolSelect }: SchoolSearchProps) {
 
             {/* Header - Only desktop */}
             <div className="text-center mb-8 hidden lg:block">
-              <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-2">
                 Selecciona tu Colegio
               </h2>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 dark:text-accent-foreground/45 text-sm">
                 Busca y selecciona la institución educativa
                 <br />
                 donde trabajas como docente
@@ -213,10 +211,8 @@ export function SchoolSearch({ onSchoolSelect }: SchoolSearchProps) {
                         />
                       </svg>
                     </div>
-                    <p className="text-lg text-gray-500 mb-2">
-                      No se encontraron colegios
-                    </p>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-lg mb-2">No se encontraron colegios</p>
+                    <p className="text-sm text-gray-400 dark:text-accent-foreground/45">
                       Intenta con otros términos de búsqueda
                     </p>
                   </motion.div>
