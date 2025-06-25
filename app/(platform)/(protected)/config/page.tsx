@@ -12,9 +12,22 @@ import {
 import { settingsTabs } from "@/constants/config";
 import { AppearanceSettings } from "@/components/dashboard/config/appearance-settings";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ThemeColorPicker } from "@/components/dashboard/config/theme-color-picker";
+import { FontSelect } from "@/components/dashboard/config/font-select";
+import { FontSizeSelector } from "@/components/dashboard/config/font-size-selector";
+import { Button } from "@/components/ui/button";
+import { useThemeConfigStore } from "@/stores/theme-config-store";
+import { useTheme } from "next-themes";
 
 export default function ConfigPage() {
+  const { setTheme } = useTheme();
+  const { resetConfig } = useThemeConfigStore();
   const [activeTab, setActiveTab] = useState("account");
+
+  const handleReset = () => {
+    resetConfig();
+    setTheme("system");
+  };
 
   return (
     <div className="h-[calc(100vh-theme(spacing.16))] flex flex-col">
@@ -41,7 +54,7 @@ export default function ConfigPage() {
                       <TabsTrigger
                         key={tab.value}
                         value={tab.value}
-                        className="w-full justify-start p-3 data-[state=active]:shadow-none data-[state=active]:bg-accent-foreground/10 data-[state=active]:text-accent-foreground overflow-hidden"
+                        className="w-full justify-start p-3 data-[state=active]:border-primary/40 dark:data-[state=active]:border-primary/40 data-[state=active]:shadow-none data-[state=active]:bg-primary/10 dark:data-[state=active]:bg-primary/10 hover:border-border data-[state=active]:text-accent-foreground overflow-hidden"
                       >
                         <div className="flex items-center space-x-3 text-left">
                           <Icon className="h-4 w-4 shrink-0" />
@@ -61,7 +74,7 @@ export default function ConfigPage() {
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 h-full">
+          <div className="flex-1 h-full lg:overflow-y-auto">
             <TabsContent
               value="account"
               className="min-h-full pb-10 sm:pb-0"
@@ -69,12 +82,16 @@ export default function ConfigPage() {
 
             <TabsContent
               value="appearance"
-              className="min-h-full pb-10 sm:pb-0"
+              className="min-h-full space-y-6 py-10 sm:py-5"
             >
-              <div className="h-full lg:overflow-y-auto pr-2">
-                <div className="space-y-6">
-                  <AppearanceSettings />
-                </div>
+              <AppearanceSettings />
+              <ThemeColorPicker />
+              <FontSelect />
+              <FontSizeSelector />
+              <div className="flex justify-end px-6">
+                <Button variant="outline" className="w-fit" onClick={handleReset}>
+                  Reestablecer
+                </Button>
               </div>
             </TabsContent>
 

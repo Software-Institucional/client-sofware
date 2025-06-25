@@ -79,7 +79,7 @@ export function AppearanceSettings() {
   };
 
   return (
-    <Card className="max-w-5xl mx-auto bg-transparent border-none shadow-none min-h-full">
+    <Card className="max-w-5xl mx-auto bg-transparent border-none shadow-none">
       <CardHeader>
         <CardTitle>Configuración de la apariencia</CardTitle>
         <CardDescription className="max-w-4xl">
@@ -89,7 +89,7 @@ export function AppearanceSettings() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid max-[550px]:grid-cols-1 max-[1100px]:grid-cols-2 min-[1200px]:grid-cols-2 2xl:grid-cols-3 gap-4">
+        <div className="flex flex-wrap gap-4 justify-start">
           {themeOptions.map((option) => {
             const Icon = option.icon;
             const isSelected = theme === option.value;
@@ -99,15 +99,15 @@ export function AppearanceSettings() {
                 key={option.value}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="relative"
+                className="relative xl:max-w-[calc(33.333%-1rem)] min-w-[260px] flex-1 basis-[calc(33.333%-1rem)]"
               >
                 <button
                   onClick={() => setTheme(option.value)}
                   className={cn(
                     "w-full min-h-full p-4 rounded-xl border-2 transition-all duration-200 text-left",
                     isSelected
-                      ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
-                      : "border-border hover:border-blue-300 hover:bg-accent/50"
+                      ? "border-primary bg-primary/5 dark:bg-primary/10"
+                      : "border-border hover:border-primary/40 hover:bg-primary/5"
                   )}
                 >
                   {/* Preview Window */}
@@ -121,7 +121,7 @@ export function AppearanceSettings() {
                       <Icon
                         className={cn(
                           "size-4",
-                          isSelected ? "text-blue-600" : "text-muted-foreground"
+                          isSelected ? "text-primary" : "text-muted-foreground"
                         )}
                       />
                       <div className="flex items-center flex-wrap gap-2">
@@ -133,7 +133,7 @@ export function AppearanceSettings() {
                             className={cn(
                               "text-xs px-2 py-0.5 rounded-full",
                               isSelected
-                                ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                                ? "bg-primary text-primary-foreground font-medium"
                                 : "bg-muted text-muted-foreground"
                             )}
                           >
@@ -152,7 +152,7 @@ export function AppearanceSettings() {
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="absolute top-2 right-2 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center"
+                      className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center"
                     >
                       <Check className="size-3 text-white" />
                     </motion.div>
@@ -166,7 +166,7 @@ export function AppearanceSettings() {
         {/* Additional Info */}
         <div className="mt-6 p-4 bg-muted/50 rounded-lg">
           <div className="flex items-start gap-3">
-            <div className="p-1 shrink-0 rounded-full bg-blue-100 text-blue-600 dark:text-blue-100 dark:bg-blue-900 flex items-center justify-center mt-0.5">
+            <div className="p-1 shrink-0 rounded-full bg-primary/50 dark:bg-primary/80 text-primary-foreground flex items-center justify-center mt-0.5">
               <Info className="size-5" />
             </div>
             <div>

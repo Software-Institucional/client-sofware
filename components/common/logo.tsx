@@ -27,7 +27,7 @@ export function Logo({
         className={cn("h-10 w-auto obcject-contain", logoClassname)}
       />
       {showName && (
-        <span className={cn("text-2xl font-bold text-primary", labelClassname)}>
+        <span className={cn("text-2xl font-bold", labelClassname)}>
           {platformName}{" "}
         </span>
       )}

@@ -2,11 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Public routes that should NOT be seen if the user is already logged in.
-const publicRoutes = [
-  "/login",
-  "/login/admin",
-  "/reset-password",
-];
+const publicRoutes = ["/login", "/login/admin", "/reset-password"];
 
 // Private routes that require authentication.
 const privateRoutes = ["/dashboard", "/config", "/admin"];
@@ -39,13 +35,17 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
+// export const config = {
+//   matcher: [
+//     // solo las rutas que nos interesan
+//     "/dashboard/:path*",
+//     "/admin/:path*",
+//     "/login",
+//     "/login/admin",
+//     "/reset-password",
+//   ],
+// };
+
 export const config = {
-  matcher: [
-    // solo las rutas que nos interesan
-    "/dashboard/:path*",
-    "/admin/:path*",
-    "/login",
-    "/login/admin",
-    "/reset-password",
-  ],
+  matcher: ["/((?!_next|api|favicon.ico).*)"], // aplica a todo excepto rutas técnicas
 };
