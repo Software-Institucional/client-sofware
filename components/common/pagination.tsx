@@ -69,7 +69,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
             ) : (
               <motion.button
                 onClick={() => onPageChange(page as number)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-3 py-2 rounded-lg text-sm text-primary-foreground font-medium transition-colors ${
                   currentPage === page
                     ? "bg-primary shadow-sm"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"

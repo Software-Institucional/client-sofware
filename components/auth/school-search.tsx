@@ -100,17 +100,17 @@ export function SchoolSearch({ onSchoolSelect }: SchoolSearchProps) {
               </div>
 
               {/* Stats */}
-              <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-500/20 rounded-lg">
-                <h4 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
+              <div className="mt-8 p-4 bg-accent dark:bg-accent/40 border-border border rounded-lg">
+                <h4 className="text-sm font-medium mb-2">
                   Resultados
                 </h4>
-                <p className="text-sm text-blue-700 dark:text-blue-400">
+                <p className="text-sm">
                   {schools.length} colegio{schools.length !== 1 ? "s" : ""}{" "}
                   encontrado
                   {schools.length !== 1 ? "s" : ""}
                 </p>
                 {totalPages > 1 && (
-                  <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                  <p className="text-xs mt-1">
                     Página {currentPage} de {totalPages}
                   </p>
                 )}

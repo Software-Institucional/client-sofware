@@ -8,10 +8,10 @@ export default function AuthLayout({
   return (
     <div className="h-[100dvh] bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 relative overflow-y-auto">
       {/* Simplified decorative elements */}
-      <div className="absolute top-32 left-8 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full opacity-40"></div>
-      <div className="absolute top-48 left-32 w-6 h-6 border-2 border-blue-200 dark:border-blue-700 rounded-full"></div>
-      <div className="absolute bottom-32 right-32 w-8 h-8 bg-blue-200 dark:bg-blue-800/30 rounded-lg opacity-50"></div>
-      <div className="absolute bottom-48 right-8 w-6 h-6 border-2 border-blue-300 dark:border-blue-600 rounded-full"></div>
+      <div className="absolute top-32 left-8 w-12 h-12 bg-primary rounded-full opacity-40"></div>
+      <div className="absolute top-48 left-32 w-6 h-6 border-2 border-primary rounded-full"></div>
+      <div className="absolute bottom-32 right-32 w-8 h-8 bg-primary rounded-lg opacity-50"></div>
+      <div className="absolute bottom-48 right-8 w-6 h-6 border-2 border-primary rounded-full"></div>
 
       {/* Additional illustration placeholders for decorative elements */}
       <div className="absolute right-0 bottom-0 lg:block hidden">

@@ -12,9 +12,9 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
         primary:
-          "w-full h-auto bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium",
+          "w-full h-auto bg-primary hover:bg-primary text-primary-foreground rounded-lg font-medium",
         primaryOutline:
-          "w-full bg-blue-50 dark:bg-blue-600/40 text-blue-600 dark:text-blue-300 border-blue-200 hover:bg-blue-100 dark:hover:bg-blue-600/50 flex items-center justify-center gap-3 font-medium",
+          "w-full  border hover:bg-primary/20 dark:hover:bg-primary/20 flex items-center justify-center gap-3 font-medium",
         destructive:
           "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
