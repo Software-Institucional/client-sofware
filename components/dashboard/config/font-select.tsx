@@ -15,7 +15,7 @@ export function FontSelect() {
   const { config, updateConfig } = useThemeConfigStore();
 
   return (
-    <Card className="max-w-5xl mx-auto bg-transparent border-none shadow-none">
+    <Card className="max-w-5xl mx-auto bg-transparent dark:bg-transparent border-none shadow-none">
       <CardHeader>
         <CardTitle>Tipografía</CardTitle>
         <CardDescription className="max-w-4xl">

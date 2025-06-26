@@ -43,8 +43,8 @@ export const data = {
       icon: FolderIcon,
     },
     {
-      title: "Team",
-      url: "#",
+      title: "Usuarios",
+      url: "/users",
       icon: UsersIcon,
     },
   ],

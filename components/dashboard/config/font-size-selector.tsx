@@ -15,7 +15,7 @@ export function FontSizeSelector() {
   const { config, updateConfig } = useThemeConfigStore();
 
   return (
-    <Card className="max-w-5xl mx-auto bg-transparent border-none shadow-none">
+    <Card className="max-w-5xl mx-auto bg-transparent dark:bg-transparent border-none shadow-none">
       <CardHeader>
         <CardTitle>Tamaño de Fuente</CardTitle>
         <CardDescription>

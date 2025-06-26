@@ -40,7 +40,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
 
   return (
     <motion.div
-      className="flex items-center justify-center gap-2 mt-6"
+      className="flex items-center justify-center gap-2"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -71,7 +71,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
                 onClick={() => onPageChange(page as number)}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   currentPage === page
-                    ? "bg-blue-500 text-white shadow-sm"
+                    ? "bg-primary shadow-sm"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
                 whileHover={{ scale: currentPage !== page ? 1.05 : 1 }}

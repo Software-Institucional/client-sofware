@@ -5,7 +5,11 @@ import type { NextRequest } from "next/server";
 const publicRoutes = ["/login", "/login/admin", "/reset-password"];
 
 // Private routes that require authentication.
-const privateRoutes = ["/dashboard", "/config", "/admin"];
+const privateRoutes = [
+  "/dashboard", 
+  "/config", 
+  "/users",
+  "/admin"];
 
 export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
