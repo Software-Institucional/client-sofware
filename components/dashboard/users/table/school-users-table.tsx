@@ -56,6 +56,7 @@ export function SchoolUsersTable({
   pageSize,
   onPageSizeChange,
 }: SchoolUsersTableProps) {
+
   const uniqueRoles = Array.from(new Set(users.map((user) => user.role)));
   const roleOptions = uniqueRoles.map((role) => ({
     label: role,
@@ -63,13 +64,13 @@ export function SchoolUsersTable({
   }));
 
   const statusOptions = [
-    { label: "Activo", value: "active" },
-    { label: "Inactivo", value: "inactive" },
+    { label: "Activo", value: "true" },
+    { label: "Inactivo", value: "false" },
   ];
 
   const verifiedOptions = [
-    { label: "Verificado", value: "verified", icon: CheckCircle2 },
-    { label: "No verificado", value: "unverified", icon: XCircle2 },
+    { label: "Verificado", value: "true", icon: CheckCircle2 },
+    { label: "No verificado", value: "false", icon: XCircle2 },
   ];
 
   const columns: ColumnDef<User>[] = [

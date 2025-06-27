@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { Check, ChevronsUpDown, MapPin } from "lucide-react";
 
@@ -19,22 +18,19 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { School } from "@/types/school";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SchoolInfo } from "./school-info";
 
+import { useSchoolStore } from "@/stores/school-store";
+
 interface SchoolSelectorProps {
   schools: School[];
-  selectedSchool: School | null;
-  onSchoolSelect: (schoolId: School | null) => void;
 }
 
-export function SchoolSelector({
-  schools,
-  selectedSchool,
-  onSchoolSelect,
-}: SchoolSelectorProps) {
+export function SchoolSelector({ schools }: SchoolSelectorProps) {
   const [open, setOpen] = useState(false);
+
+  const { selectedSchool, setSelectedSchool } = useSchoolStore();
 
   const selectedSchoolData = schools.find(
     (school) => school.id === selectedSchool?.id
@@ -54,7 +50,9 @@ export function SchoolSelector({
               <div className="flex items-center gap-3 text-left">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
                 <div className="flex flex-col">
-                  <span className="font-medium text-wrap">{selectedSchoolData.name}</span>
+                  <span className="font-medium text-wrap">
+                    {selectedSchoolData.name}
+                  </span>
                   <div className="flex items-center gap-1 text-sm text-muted-foreground">
                     <MapPin className="h-3 w-3" />
                     {selectedSchoolData.municipality},{" "}
@@ -82,9 +80,9 @@ export function SchoolSelector({
                     key={school.id}
                     value={school.name}
                     onSelect={() => {
-                      onSchoolSelect(
-                        school.id === selectedSchool?.id ? null : school
-                      );
+                      const newSchool =
+                        school.id === selectedSchool?.id ? null : school;
+                      setSelectedSchool(newSchool ?? school);
                       setOpen(false);
                     }}
                     className="p-3"

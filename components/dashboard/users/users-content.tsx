@@ -21,22 +21,23 @@ import { UserFormDialog } from "./user-form-dialog";
 import { SchoolInfoSkeleton } from "@/components/skeletons/schools/school-info-skeleton";
 import { SchoolUsersCardSkeleton } from "@/components/skeletons/schools/school-users-table-skeleton";
 
+import { useSchoolStore } from "@/stores/school-store";
+import { User } from "@/types/school-users";
+
 interface UsersContentProps {
   schools: School[];
   selectedSchool: School | null;
   isLoadingSchools: boolean;
-  onSchoolSelect: (schoolId: School | null) => void;
+  onSchoolSelect: (school: School) => void;
 }
 
-export function UsersContent({
-  schools,
-  selectedSchool,
-  isLoadingSchools,
-  onSchoolSelect,
-}: UsersContentProps) {
+export function UsersContent({ schools, isLoadingSchools }: UsersContentProps) {
   const [limit, setLimit] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [editUser, setEditUser] = useState<User | null>(null);
+  const [isEditUser, setIsEditUser] = useState<boolean>(false);
+
+  const { selectedSchool, currentPage, setCurrentPage } = useSchoolStore();
 
   const { data: usersData } = useQuery({
     queryKey: ["schoolUsers", selectedSchool?.id, currentPage, limit],
@@ -62,11 +63,7 @@ export function UsersContent({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <SchoolSelector
-              schools={schools}
-              selectedSchool={selectedSchool}
-              onSchoolSelect={onSchoolSelect}
-            />
+            <SchoolSelector schools={schools} />
           </CardContent>
         </Card>
 
@@ -94,9 +91,13 @@ export function UsersContent({
             <CardContent>
               <SchoolUsersTable
                 users={users}
-                onEditUser={() => {}}
+                onEditUser={(user) => {
+                  console.log(user);
+                  setEditUser(user);
+                  setIsEditUser(true);
+                }}
                 onDeleteUser={() => {}}
-                pageIndex={currentPage - 1} // react-table usa 0-index
+                pageIndex={currentPage - 1}
                 onPageChange={(index) => setCurrentPage(index + 1)}
                 pageCount={totalPages}
                 pageSize={limit}
@@ -111,21 +112,21 @@ export function UsersContent({
 
       {/* Dialogs */}
       {selectedSchool && (
-        <UserFormDialog
-          isOpen={isAddUserOpen}
-          onOpenChange={setIsAddUserOpen}
-          school={selectedSchool}
-          mode="create"
-        />
-      )}
+        <>
+          <UserFormDialog
+            isOpen={isAddUserOpen}
+            onOpenChange={setIsAddUserOpen}
+            mode="create"
+          />
 
-      {/* <UserFormDialog
-        isOpen={isEditUserOpen}
-        onOpenChange={setIsEditUserOpen}
-        school={school}
-        user={selectedUser}
-        mode="edit"
-      /> */}
+          <UserFormDialog
+            isOpen={isEditUser}
+            onOpenChange={setIsEditUser}
+            mode="edit"
+            user={editUser}
+          />
+        </>
+      )}
     </>
   );
 }
