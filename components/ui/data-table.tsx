@@ -38,7 +38,8 @@ import {
   ChevronsRight,
   Settings,
 } from "lucide-react";
-import { DataTableFacetedFilter } from "../dashboard/users/table/faceted-filter";
+import { getColumnLabel } from "@/lib/utils";
+import { DataTableFacetedFilter } from "@/components/dashboard/users/table/faceted-filter";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -81,7 +82,6 @@ export function DataTable<TData, TValue>({
   pageSize,
   onPageSizeChange,
 }: DataTableProps<TData, TValue>) {
-  // Estados para los filtros
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -137,7 +137,7 @@ export function DataTable<TData, TValue>({
                   .getColumn(filterColumn)
                   ?.setFilterValue(event.target.value)
               }
-              className="max-w-sm"
+              className="max-w-sm bg-white"
             />
           )}
 
@@ -171,7 +171,7 @@ export function DataTable<TData, TValue>({
                   />
                 )}
             </div>
-            
+
             {showColumnToggle && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -192,7 +192,7 @@ export function DataTable<TData, TValue>({
                           column.toggleVisibility(!!value)
                         }
                       >
-                        {column.id}
+                        {getColumnLabel(column.id)}
                       </DropdownMenuCheckboxItem>
                     ))}
                 </DropdownMenuContent>
@@ -261,7 +261,7 @@ export function DataTable<TData, TValue>({
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
             className="h-8 w-16 rounded-md border border-input bg-background px-2 text-xs"
           >
-            {[0, 10, 20, 30, 40, 50].map((size) => (
+            {[5, 10, 20, 30, 40, 50].map((size) => (
               <option key={size} value={size}>
                 {size}
               </option>

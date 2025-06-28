@@ -12,17 +12,19 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import type { School } from "@/types/school";
+import { Button } from "@/components/ui/button";
 import { SchoolInfo } from "@/components/dashboard/users/school-info";
 import { SchoolUsersTable } from "@/components/dashboard/users/table/school-users-table";
 import { fetchSchoolUsers } from "@/utils/school-users";
-import { SchoolSelector } from "./school-selector";
-import { Button } from "@/components/ui/button";
-import { UserFormDialog } from "./user-form-dialog";
+import { SchoolSelector } from "@/components/dashboard/users/school-selector";
+import { UserFormDialog } from "@/components/dashboard/users/user-form-dialog";
 import { SchoolInfoSkeleton } from "@/components/skeletons/schools/school-info-skeleton";
 import { SchoolUsersCardSkeleton } from "@/components/skeletons/schools/school-users-table-skeleton";
 
 import { useSchoolStore } from "@/stores/school-store";
 import { User } from "@/types/school-users";
+import { SchoolStats } from "@/components/dashboard/users/school-stats";
+import { CardStatsSkeleton } from "@/components/skeletons/common/card-stats-skeleton";
 
 interface UsersContentProps {
   schools: School[];
@@ -33,23 +35,51 @@ interface UsersContentProps {
 
 export function UsersContent({ schools, isLoadingSchools }: UsersContentProps) {
   const [limit, setLimit] = useState(10);
+  const [userPage, setUserPage] = useState(1);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [editUser, setEditUser] = useState<User | null>(null);
   const [isEditUser, setIsEditUser] = useState<boolean>(false);
 
-  const { selectedSchool, currentPage, setCurrentPage } = useSchoolStore();
+  const { selectedSchool } = useSchoolStore();
 
   const { data: usersData } = useQuery({
-    queryKey: ["schoolUsers", selectedSchool?.id, currentPage, limit],
+    queryKey: ["schoolUsers", selectedSchool?.id, userPage, limit],
     queryFn: () =>
       selectedSchool
-        ? fetchSchoolUsers(selectedSchool.id, currentPage, limit)
-        : Promise.resolve({ users: [], page: 1, limit: 10, totalPages: 1 }),
+        ? fetchSchoolUsers(selectedSchool!.id, userPage, limit)
+        : Promise.resolve({
+            users: [],
+            page: 1,
+            limit: 10,
+            totalPages: 1,
+            totalUsers: 0,
+            activeUsers: 0,
+            totalSedes: 0,
+            teachers: 0,
+          }),
     enabled: !!selectedSchool,
   });
 
   const totalPages = usersData?.totalPages ?? 1;
   const users = usersData?.users ?? [];
+  const stats = [
+    {
+      label: "Sedes",
+      value: usersData?.totalSedes ?? 0,
+    },
+    {
+      label: "Total de usuarios",
+      value: usersData?.totalUsers ?? 0,
+    },
+    {
+      label: "Total de docentes",
+      value: usersData?.teachers ?? 0,
+    },
+    {
+      label: "Usuarios activos",
+      value: usersData?.teachers ?? 0,
+    },
+  ];
 
   return (
     <>
@@ -71,11 +101,18 @@ export function UsersContent({ schools, isLoadingSchools }: UsersContentProps) {
         {selectedSchool && (
           <SchoolInfo school={selectedSchool} className="hidden lg:block" />
         )}
+
+        {/* School info skeleton */}
         {isLoadingSchools && !selectedSchool && <SchoolInfoSkeleton />}
 
+        {/* School stats */}
+        {!isLoadingSchools && <SchoolStats stats={stats} />}
+        {isLoadingSchools && <CardStatsSkeleton />}
+
+        {/* Users table */}
         {selectedSchool && (
           <Card>
-            <CardHeader className="flex flex-col items-end md:flex-row justify-between">
+            <CardHeader className="flex flex-col lg:items-end md:flex-row justify-between gap-4">
               <div>
                 <CardTitle className="text-lg">
                   Usuarios de {selectedSchool?.name}
@@ -84,7 +121,10 @@ export function UsersContent({ schools, isLoadingSchools }: UsersContentProps) {
                   Gestiona los usuarios asignados a este colegio
                 </CardDescription>
               </div>
-              <Button onClick={() => setIsAddUserOpen(true)}>
+              <Button
+                className="max-md:w-full"
+                onClick={() => setIsAddUserOpen(true)}
+              >
                 <Plus /> Crear nuevo usuario
               </Button>
             </CardHeader>
@@ -92,13 +132,12 @@ export function UsersContent({ schools, isLoadingSchools }: UsersContentProps) {
               <SchoolUsersTable
                 users={users}
                 onEditUser={(user) => {
-                  console.log(user);
                   setEditUser(user);
                   setIsEditUser(true);
                 }}
                 onDeleteUser={() => {}}
-                pageIndex={currentPage - 1}
-                onPageChange={(index) => setCurrentPage(index + 1)}
+                pageIndex={userPage - 1}
+                onPageChange={(index) => setUserPage(index + 1)}
                 pageCount={totalPages}
                 pageSize={limit}
                 onPageSizeChange={(size) => setLimit(size)}
@@ -107,6 +146,7 @@ export function UsersContent({ schools, isLoadingSchools }: UsersContentProps) {
           </Card>
         )}
 
+        {/* Users table skeleton  */}
         {isLoadingSchools && !selectedSchool && <SchoolUsersCardSkeleton />}
       </div>
 

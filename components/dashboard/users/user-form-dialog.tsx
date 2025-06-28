@@ -1,8 +1,13 @@
 "use client";
 
 import * as z from "zod";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState, useTransition } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   Form,
@@ -24,24 +29,25 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-import type { School } from "@/types/school";
+import api from "@/lib/axios";
 import type { User } from "@/types/school-users";
 import { Modal } from "@/components/common/modal";
-import api from "@/lib/axios";
-import { toast } from "sonner";
-import { AxiosError } from "axios";
+import { School } from "@/types/school";
+import { roles } from "@/constants/users";
+import { fetchSchools } from "@/utils/schools";
 import { useAuthStore } from "@/stores/auth-store";
 import { useSchoolStore } from "@/stores/school-store";
-import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useTransition } from "react";
-import { Loader } from "lucide-react";
+import { SedeSelector } from "@/components/dashboard/users/sede-selector";
+import { SchoolSelector } from "@/components/dashboard/users/school-selector";
 
 const formSchema = z.object({
-  firstName: z.string().min(1, "Requerido"),
-  lastName: z.string().min(1, "Requerido"),
-  email: z.string().email("Email inválido"),
-  role: z.string().min(1, "Selecciona un rol"),
+  firstName: z.string().trim().min(1, "Requerido"),
+  lastName: z.string().trim().min(1, "Requerido"),
+  email: z.string().trim().email("Email inválido"),
+  role: z.string().trim().min(1, "Selecciona un rol"),
   activate: z.boolean().optional(),
+  sedeId: z.string().trim().optional(),
+  schoolId: z.string().min(1, "Selecciona un colegio"),
 });
 
 interface UserFormDialogProps {
@@ -61,9 +67,19 @@ export function UserFormDialog({
   const { user: authUser } = useAuthStore();
   const { selectedSchool } = useSchoolStore();
 
+  const [currentSelectedSchool, setCurrentSelectedSchool] =
+    useState(selectedSchool);
   const [isPending, startTransition] = useTransition();
+  const [searchTerm, setSearchTerm] = useState("");
+  const limit = 10;
 
-  console.log("Usuario desde el form", user)
+  const { data } = useQuery({
+    queryKey: ["userEditSchools", searchTerm],
+    queryFn: () => fetchSchools(searchTerm, 1, limit),
+    enabled: !!searchTerm,
+  });
+
+  const schools: School[] = data?.schools ?? [];
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,52 +89,69 @@ export function UserFormDialog({
       email: user?.email || "",
       role: user?.role || "",
       activate: user?.activate ?? true,
+      schoolId: currentSelectedSchool?.id,
+      sedeId: user?.sedes?.id ?? "",
     },
   });
 
   useEffect(() => {
-  if (user && mode === "edit") {
-    form.reset({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-      activate: user.activate ?? true,
-    });
-  }
-}, [user, mode, form]);
+    if (user && mode === "edit") {
+      form.reset({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        activate: user.activate ?? true,
+        sedeId: user.sedes?.id ?? "",
+        schoolId: currentSelectedSchool?.id,
+      });
+    }
+  }, [user, mode, form]);
 
-  const createUser = async (
-    data: z.infer<typeof formSchema>,
-    schoolId: string,
-    createdById: string
-  ) => {
+  useEffect(() => {
+    if (isOpen) {
+      setSearchTerm("");
+      setCurrentSelectedSchool(user?.school ?? selectedSchool);
+
+      form.reset({
+        firstName: user?.firstName || "",
+        lastName: user?.lastName || "",
+        email: user?.email || "",
+        role: user?.role || "",
+        activate: user?.activate ?? true,
+        schoolId: user?.school?.id ?? selectedSchool?.id ?? "",
+        sedeId: user?.sedes?.id ?? "",
+      });
+    }
+  }, [isOpen, user]);
+
+  const { isValid } = form.formState;
+
+  const createUser = async (data: z.infer<typeof formSchema>) => {
     const body = {
       email: data.email,
       role: data.role,
       firstName: data.firstName,
       lastName: data.lastName,
-      createdById,
-      schools: [{ schoolId }],
+      createdById: authUser?.id,
+      schoolId: data.schoolId,
+      ...(data.sedeId && data.sedeId.trim() !== "" && { sedeId: data.sedeId }),
     };
 
     const response = await api.post("/auth/register", body);
     return response.data;
   };
 
-  const updateUser = async (
-    userId: string,
-    data: z.infer<typeof formSchema>,
-    schoolId: string
-  ) => {
+  const updateUser = async (data: z.infer<typeof formSchema>) => {
     const body = {
-      id: userId,
+      id: user?.id,
       email: data.email,
       firstName: data.firstName,
       lastName: data.lastName,
       role: data.role,
       activate: data.activate,
-      schools: [{ schoolId }],
+      schoolId: data.schoolId,
+      ...(data.sedeId && data.sedeId.trim() !== "" && { sedeId: data.sedeId }),
     };
 
     const response = await api.put("/auth/update-user", body);
@@ -131,10 +164,11 @@ export function UserFormDialog({
         if (!selectedSchool) return;
 
         if (mode === "create") {
-          const createdById = authUser?.id;
-          await createUser(values, selectedSchool.id, createdById!);
+          await createUser(values);
+          toast.success("Usuario creado.");
         } else if (user) {
-          await updateUser(user.id, values, selectedSchool.id);
+          await updateUser(values);
+          toast.success("Usuario actualizado.");
         }
 
         await queryClient.invalidateQueries({
@@ -142,7 +176,15 @@ export function UserFormDialog({
         });
 
         onOpenChange(false);
-        form.reset();
+        form.reset({
+          firstName: user?.firstName || "",
+          lastName: user?.lastName || "",
+          email: user?.email || "",
+          role: user?.role || "",
+          activate: user?.activate ?? true,
+          schoolId: user?.school?.id ?? selectedSchool?.id ?? "",
+          sedeId: user?.sedes?.id ?? "",
+        });
       } catch (error) {
         const err = error as AxiosError;
         const message =
@@ -167,7 +209,7 @@ export function UserFormDialog({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-6 pr-4">
-            {/* Información Personal */}
+            {/* Personal information */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Información Personal</h3>
               <div className="grid grid-cols-2 gap-4">
@@ -178,7 +220,11 @@ export function UserFormDialog({
                     <FormItem>
                       <FormLabel>Nombre *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Nombre" {...field} />
+                        <Input
+                          placeholder="Nombre"
+                          className="bg-input/30"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -191,7 +237,11 @@ export function UserFormDialog({
                     <FormItem>
                       <FormLabel>Apellido *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Apellido" {...field} />
+                        <Input
+                          placeholder="Apellido"
+                          className="bg-input/30"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -201,6 +251,7 @@ export function UserFormDialog({
               <FormField
                 control={form.control}
                 name="email"
+                disabled={mode === "edit"}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email *</FormLabel>
@@ -208,6 +259,7 @@ export function UserFormDialog({
                       <Input
                         type="email"
                         placeholder="usuario@ejemplo.com"
+                        className="bg-input/30"
                         {...field}
                       />
                     </FormControl>
@@ -219,9 +271,10 @@ export function UserFormDialog({
 
             <Separator />
 
-            {/* Información Académica */}
+            {/* Academic information */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Información Académica</h3>
+
               <FormField
                 control={form.control}
                 name="role"
@@ -230,35 +283,85 @@ export function UserFormDialog({
                     <FormLabel>Rol *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-input/30">
                           <SelectValue placeholder="Seleccionar rol" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="DOCENTE">Docente</SelectItem>
-                        <SelectItem value="ADMIN">Administrador</SelectItem>
-                        <SelectItem value="COORDINADOR">Coordinador</SelectItem>
-                        <SelectItem value="ESTUDIANTE">Estudiante</SelectItem>
-                        <SelectItem value="SECRETARIO">Secretario</SelectItem>
-                        <SelectItem value="BIBLIOTECARIO">
-                          Bibliotecario
-                        </SelectItem>
+                        {roles.map(({ value, label }) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              {mode === "edit" && (
+                <FormField
+                  control={form.control}
+                  name="schoolId"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel>Colegio *</FormLabel>
+                      <SchoolSelector
+                        isEditing
+                        schools={schools ?? []}
+                        searchTerm={searchTerm}
+                        setSearchTerm={setSearchTerm}
+                        selectedSchool={currentSelectedSchool}
+                        setCurrentSelectedSchool={setCurrentSelectedSchool}
+                        onSelect={(id) => {
+                          const previousSchoolId = form.getValues("schoolId");
+
+                          if (previousSchoolId !== id) {
+                            // Cambió a un colegio diferente: limpiar sedeId
+                            form.setValue("sedeId", "");
+                          } else if (user?.sedes?.id) {
+                            // Volvió al colegio original: restaurar sedeId si la tenía
+                            form.setValue("sedeId", user.sedes.id);
+                          }
+
+                          const selected = schools.find((s) => s.id === id);
+                          setCurrentSelectedSchool(selected ?? null);
+
+                          field.onChange(id);
+                        }}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {currentSelectedSchool &&
+                currentSelectedSchool?.sedes.length > 0 && (
+                  <FormField
+                    control={form.control}
+                    name="sedeId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Sede</FormLabel>
+                        <SedeSelector
+                          selectedSchool={currentSelectedSchool}
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
             </div>
 
-            <Separator />
-
-            {/* Estado del Usuario */}
+            {/* User state */}
             {mode === "edit" && (
               <>
                 <Separator />
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Estado del Usuario</h3>
+                <div className="space-y-4 bg-input/30 border rounded-md p-3">
                   <FormField
                     control={form.control}
                     name="activate"
@@ -292,7 +395,7 @@ export function UserFormDialog({
               >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isPending}>
+              <Button type="submit" disabled={isPending || !isValid}>
                 {isPending && <Loader className="animate-spin" />}
                 {mode === "create" ? "Crear usuario" : "Guardar cambios"}
               </Button>

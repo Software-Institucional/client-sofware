@@ -1,4 +1,4 @@
-import { School } from "./school";
+import { School, Sede } from "@/types/school";
 
 export interface User {
   id: string;
@@ -8,5 +8,6 @@ export interface User {
   role: string;
   isEmailVerified: boolean;
   activate: boolean;
-  schools: School[];
+  school: School;
+  sedes: Sede
 }

@@ -1,21 +1,19 @@
 import { AxiosError, AxiosResponse } from "axios";
 
 import api from "@/lib/axios";
-import { School } from "@/types/school";
 import { User } from "@/types/school-users";
 
-interface SchoolWithUsers {
-  school: School;
-  users: User[];
-}
-
 interface ApiResponse {
-  schools: SchoolWithUsers[];
+  users: User[];
   metadata: {
     total: number;
     page: number;
     limit: number;
     totalPages: number;
+    activos: number;
+    cantidadSedes: number;
+    docentes: number;
+    totalUsers: number;
   };
 }
 
@@ -28,10 +26,14 @@ export async function fetchSchoolUsers(
   page: number;
   limit: number;
   totalPages: number;
+  totalUsers: number;
+  teachers: number;
+  totalSedes: number;
+  activeUsers: number;
 }> {
   try {
     const response: AxiosResponse<ApiResponse> = await api.get(
-      `auth/view-registered`,
+      `/auth/view-registered`,
       {
         params: {
           schoolId,
@@ -42,13 +44,22 @@ export async function fetchSchoolUsers(
     );
 
     const data = response.data;
-    const schoolWithUsers = data.schools.find((s) => s.school.id === schoolId);
+
+    if (!Array.isArray(data.users)) {
+      throw new Error(
+        "La propiedad 'users' no está presente o no es un array."
+      );
+    }
 
     return {
-      users: schoolWithUsers?.users || [],
+      users: data?.users || [],
       page: data.metadata.page || page,
       limit: data.metadata.limit || limit,
       totalPages: data.metadata.totalPages || 1,
+      totalUsers: data.metadata.totalUsers,
+      totalSedes: data.metadata.cantidadSedes,
+      activeUsers: data.metadata.activos,
+      teachers: data.metadata.docentes,
     };
   } catch (error) {
     console.error("Error fetching school users:", error);
@@ -60,6 +71,10 @@ export async function fetchSchoolUsers(
       page,
       limit,
       totalPages: 1,
+      totalUsers: 0,
+      totalSedes: 0,
+      activeUsers: 0,
+      teachers: 0,
     };
   }
 }

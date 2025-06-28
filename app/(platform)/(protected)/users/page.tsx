@@ -13,12 +13,8 @@ import { useSchoolStore } from "@/stores/school-store";
 export default function UsersPage() {
   const limit = 10;
 
-  const {
-    selectedSchool,
-    setSelectedSchool,
-    currentPage,
-    setCurrentPage,
-  } = useSchoolStore();
+  const { selectedSchool, setSelectedSchool, currentPage, setCurrentPage } =
+    useSchoolStore();
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -31,7 +27,7 @@ export default function UsersPage() {
   const schools = paginatedData?.schools ?? [];
   const totalPages = paginatedData?.totalPages ?? 1;
 
-  // Auto-seleccionar el primer colegio si aún no hay uno seleccionado
+  // Auto-select the first school if one is not already selected
   useEffect(() => {
     if (schools.length > 0 && !selectedSchool) {
       setSelectedSchool(schools[0]);

@@ -23,17 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnHeader } from "@/components/common/column-header";
-
-interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-  isEmailVerified: boolean;
-  activate: boolean;
-  schools: any[];
-}
+import { User } from "@/types/school-users";
 
 interface SchoolUsersTableProps {
   users: User[];

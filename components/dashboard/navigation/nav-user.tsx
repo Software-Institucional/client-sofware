@@ -27,6 +27,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import api from "@/lib/axios";
+import { useAuthStore } from "@/stores/auth-store";
+import { useSchoolStore } from "@/stores/school-store";
 
 export function NavUser({
   user,
@@ -43,9 +45,17 @@ export function NavUser({
   const handleLogout = async () => {
     try {
       await api.get("/auth/logout");
+
+      // Reset store statuses
+      useAuthStore.getState().clearUser();
+      useSchoolStore.getState().reset();
+
+      // Delete persistent storage
+      localStorage.removeItem("auth-storage");
+      localStorage.removeItem("school-store");
+
       router.replace("/login");
     } catch (error) {
-      console.log(error);
       toast.error(
         "Error al cerrar sesión. Por favor, inténtalo de nuevo más tarde."
       );
