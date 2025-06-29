@@ -21,21 +21,27 @@ import {
   Building2,
 } from "lucide-react";
 import { School } from "@/types/school";
+import { InstitutionCardSkeleton } from "../skeletons/schools/institution-card-skeleton";
 
 interface InstitutionsListProps {
   institutions: School[];
   onEdit: (institution: School) => void;
   onDelete: (institutionId: string) => void;
+  loading?: boolean;
 }
 
 export function InstitutionsList({
   institutions,
   onEdit,
   onDelete,
+  loading = false,
 }: InstitutionsListProps) {
+  if (loading) {
+    return <InstitutionCardSkeleton />;
+  }
+
   return (
     <>
-      {/* Lista de instituciones */}
       {institutions.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -127,27 +133,6 @@ export function InstitutionsList({
                     <Building2 className="h-4 w-4" />
                     <span>Sedes ({institution.sedes.length})</span>
                   </div>
-                  {/* {institution.sedes.length > 0 ? (
-                    <div className="space-y-1">
-                      {institution.sedes.slice(0, 2).map((sede) => (
-                        <div
-                          key={sede.id}
-                          className="flex items-center justify-between text-xs"
-                        >
-                          <span className="truncate flex-1">{sede.name}</span>
-                        </div>
-                      ))}
-                      {institution.sedes.length > 2 && (
-                        <div className="text-xs text-muted-foreground">
-                          +{institution.sedes.length - 2} sedes más
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-xs text-muted-foreground">
-                      Sin sedes registradas
-                    </div>
-                  )} */}
                 </div>
               </CardContent>
             </Card>

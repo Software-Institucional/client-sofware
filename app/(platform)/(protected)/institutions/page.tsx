@@ -14,13 +14,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { School } from "@/types/school";
 import { fetchSchools } from "@/utils/schools";
-import { useQuery } from "@tanstack/react-query";
-import { Building2, MapPin, Plus, School as SchoolIcon, Search } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Building2,
+  MapPin,
+  Plus,
+  School as SchoolIcon,
+  Search,
+} from "lucide-react";
 import React, { useState } from "react";
 
 export default function InstitutionsPage() {
+  const queryClient = useQueryClient();
+
   const [isFormOpen, setIsFormOpen] = useState(false);
-  // const [selectedInstitution, setSelectedInstitution] = useState(null)
+  const [selectedInstitution, setSelectedInstitution] = useState<School | null>(
+    null
+  );
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
 
   const limit = 10;
@@ -44,12 +54,24 @@ export default function InstitutionsPage() {
   };
 
   const handleEditInstitution = (institution: School) => {
+    setSelectedInstitution(institution);
     setFormMode("edit");
     setIsFormOpen(true);
   };
 
   const handleDeleteInstitution = (institutionId: string) => {
     // setInstitutions(institutions.filter((inst) => inst.id !== institutionId))
+  };
+
+  // Function to invalidate query after saving
+  const handleSave = () => {
+    queryClient.invalidateQueries({ queryKey: ["schools"] }); // Invalidate all schools queries
+    setIsFormOpen(false);
+  };
+
+  const handleFormOpenChange = (isOpen: boolean) => {
+    setIsFormOpen(isOpen);
+    setSelectedInstitution(null);
   };
 
   return (
@@ -59,7 +81,7 @@ export default function InstitutionsPage() {
         description="Administra las instituciones educativas y sus sedes"
       />
       {/* Estadísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -98,7 +120,7 @@ export default function InstitutionsPage() {
             <div className="text-2xl font-bold">{stats.municipalities}</div>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
       {/* Botón para crear nueva institución */}
       <Card>
@@ -112,10 +134,13 @@ export default function InstitutionsPage() {
                 Lista de todas las instituciones registradas en el sistema
               </CardDescription>
             </div>
-            <Button onClick={() => {
-              setFormMode("create")
-              setIsFormOpen(true)
-            }} className="gap-2">
+            <Button
+              onClick={() => {
+                setFormMode("create");
+                setIsFormOpen(true);
+              }}
+              className="gap-2"
+            >
               <Plus className="size-4" />
               Nueva Institución
             </Button>
@@ -123,7 +148,7 @@ export default function InstitutionsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {/* Búsqueda */}
+            {/* Search input */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -137,32 +162,19 @@ export default function InstitutionsPage() {
               institutions={schools}
               onEdit={handleEditInstitution}
               onDelete={handleDeleteInstitution}
+              loading={isLoadingSchools}
             />
           </div>
         </CardContent>
       </Card>
 
-      {/* Formulario de institución */}
+      {/* Modal form */}
       <InstitutionForm
+        institution={selectedInstitution}
         isOpen={isFormOpen}
-        onOpenChange={setIsFormOpen}
-        // institution={selectedInstitution}
+        onOpenChange={handleFormOpenChange}
         mode={formMode}
-        onSave={() => {
-          // if (formMode === "create") {
-          //   setInstitutions([
-          //     ...institutions,
-          //     { ...institutionData, id: Date.now().toString() },
-          //   ]);
-          // } else {
-          //   setInstitutions(
-          //     institutions.map((inst) =>
-          //       inst.id === selectedInstitution?.id ? institutionData : inst
-          //     )
-          //   );
-          // }
-          setIsFormOpen(false);
-        }}
+        onSave={handleSave}
       />
     </div>
   );
