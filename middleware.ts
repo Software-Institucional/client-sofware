@@ -6,10 +6,12 @@ const publicRoutes = ["/login", "/login/admin", "/reset-password"];
 
 // Private routes that require authentication.
 const privateRoutes = [
-  "/dashboard", 
-  "/config", 
+  "/dashboard",
+  "/config",
   "/users",
-  "/admin"];
+  "/institutions",
+  "/admin",
+];
 
 export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;

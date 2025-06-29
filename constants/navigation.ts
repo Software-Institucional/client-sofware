@@ -10,6 +10,7 @@ import {
   HelpCircleIcon,
   LayoutDashboardIcon,
   ListIcon,
+  School,
   SearchIcon,
   SettingsIcon,
   UsersIcon,
@@ -38,9 +39,9 @@ export const data = {
       icon: BarChartIcon,
     },
     {
-      title: "Projects",
-      url: "#",
-      icon: FolderIcon,
+      title: "Instituciones",
+      url: "/institutions",
+      icon: School,
     },
     {
       title: "Usuarios",

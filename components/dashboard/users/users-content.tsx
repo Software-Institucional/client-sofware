@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -22,7 +22,7 @@ import { SchoolInfoSkeleton } from "@/components/skeletons/schools/school-info-s
 import { SchoolUsersCardSkeleton } from "@/components/skeletons/schools/school-users-table-skeleton";
 
 import { useSchoolStore } from "@/stores/school-store";
-import { User } from "@/types/school-users";
+import { Filters, User } from "@/types/school-users";
 import { SchoolStats } from "@/components/dashboard/users/school-stats";
 import { CardStatsSkeleton } from "@/components/skeletons/common/card-stats-skeleton";
 
@@ -41,12 +41,35 @@ export function UsersContent({ schools, isLoadingSchools }: UsersContentProps) {
   const [isEditUser, setIsEditUser] = useState<boolean>(false);
 
   const { selectedSchool } = useSchoolStore();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState<Filters>({
+    role: [],
+    activate: [],
+    isEmailVerified: [],
+  });
 
-  const { data: usersData } = useQuery({
-    queryKey: ["schoolUsers", selectedSchool?.id, userPage, limit],
+  useEffect(() => {
+    setUserPage(1);
+  }, [selectedSchool]);
+
+  const { data: usersData, isLoading: isLoadingUsers } = useQuery({
+    queryKey: [
+      "schoolUsers",
+      selectedSchool?.id,
+      userPage,
+      limit,
+      searchQuery,
+      filters,
+    ],
     queryFn: () =>
       selectedSchool
-        ? fetchSchoolUsers(selectedSchool!.id, userPage, limit)
+        ? fetchSchoolUsers(
+            selectedSchool!.id,
+            userPage,
+            limit,
+            searchQuery,
+            filters
+          )
         : Promise.resolve({
             users: [],
             page: 1,
@@ -141,6 +164,11 @@ export function UsersContent({ schools, isLoadingSchools }: UsersContentProps) {
                 pageCount={totalPages}
                 pageSize={limit}
                 onPageSizeChange={(size) => setLimit(size)}
+                searchQuery={searchQuery}
+                onSearchQueryChange={setSearchQuery}
+                filters={filters}
+                onFiltersChange={setFilters}
+                isLoadingUsers={isLoadingUsers}
               />
             </CardContent>
           </Card>

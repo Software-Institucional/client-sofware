@@ -1,5 +1,6 @@
 export const headerTitleOptions: Record<string, string> = {
   "/dashboard": "Inicio",
   "/config": "Ajustes",
-  "/users": "Gestión de usuarios"
+  "/institutions": "Gestión de Instituciones",
+  "/users": "Gestión de usuarios",
 };

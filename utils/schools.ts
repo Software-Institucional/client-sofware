@@ -39,22 +39,3 @@ export const fetchSchools = async (
     throw new Error("Error desconocido al obtener las escuelas");
   }
 };
-
-export const fetchAllSchools = async (): Promise<{
-  schools: School[];
-}> => {
-  try {
-    const response = await api.get<PaginatedResponse>("/schools");
-
-    const schools = response.data.schools.map((item) => item.school);
-    
-    return { schools };
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      throw new Error(
-        error.response?.data.message || "Error al obtener las escuelas"
-      );
-    }
-    throw new Error("Error desconocido al obtener las escuelas");
-  }
-};

@@ -35,7 +35,7 @@ export default function UsersPage() {
   }, [schools, selectedSchool, setSelectedSchool]);
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.16))] flex flex-col">
+    <div className="h-[calc(100vh-theme(spacing.16))] flex flex-col max-sm:pb-10">
       <div className="flex flex-col lg:flex-row h-full">
         <SchoolSidebar
           schools={schools}
@@ -43,7 +43,9 @@ export default function UsersPage() {
           isLoadingSchools={isLoadingSchools}
           onSearch={setSearchTerm}
           selectedSchool={selectedSchool}
-          onSelectSchool={setSelectedSchool}
+          onSelectSchool={(school) => {
+            setSelectedSchool(school);
+          }}
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}

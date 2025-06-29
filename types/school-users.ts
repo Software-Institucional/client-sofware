@@ -9,5 +9,11 @@ export interface User {
   isEmailVerified: boolean;
   activate: boolean;
   school: School;
-  sedes: Sede
+  sedes: Sede;
 }
+
+export type Filters = {
+  role: string[];
+  activate: string[];
+  isEmailVerified: string[];
+};

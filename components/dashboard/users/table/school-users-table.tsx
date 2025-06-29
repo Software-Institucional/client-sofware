@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnHeader } from "@/components/common/column-header";
-import { User } from "@/types/school-users";
+import { Filters, User } from "@/types/school-users";
 
 interface SchoolUsersTableProps {
   users: User[];
@@ -34,6 +34,11 @@ interface SchoolUsersTableProps {
   pageCount: number;
   pageSize: number;
   onPageSizeChange: (size: number) => void;
+  searchQuery: string;
+  onSearchQueryChange: (query: string) => void;
+  filters: Filters;
+  onFiltersChange: (filters: Filters) => void;
+  isLoadingUsers?: boolean;
 }
 
 export function SchoolUsersTable({
@@ -45,8 +50,12 @@ export function SchoolUsersTable({
   pageCount,
   pageSize,
   onPageSizeChange,
+  filters,
+  onFiltersChange,
+  onSearchQueryChange,
+  searchQuery,
+  isLoadingUsers,
 }: SchoolUsersTableProps) {
-
   const uniqueRoles = Array.from(new Set(users.map((user) => user.role)));
   const roleOptions = uniqueRoles.map((role) => ({
     label: role,
@@ -182,6 +191,7 @@ export function SchoolUsersTable({
 
   return (
     <DataTable
+      isLoading={isLoadingUsers}
       columns={columns}
       data={users}
       roleOptions={roleOptions}
@@ -194,6 +204,11 @@ export function SchoolUsersTable({
       pageCount={pageCount}
       pageSize={pageSize}
       onPageSizeChange={onPageSizeChange}
+      // Estas 4 props son obligatorias ahora
+      searchQuery={searchQuery}
+      onSearchQueryChange={onSearchQueryChange}
+      filters={filters}
+      onFiltersChange={onFiltersChange}
     />
   );
 }
