@@ -9,12 +9,11 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { MapPin, Search } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Search } from "lucide-react";
 import { Pagination } from "@/components/common/pagination";
 import type { School } from "@/types/school";
 import { SchoolListSkeleton } from "@/components/skeletons/schools/school-list-skeleton";
+import { SidebarSchoolItem } from "@/components/common/sidebar-school-item";
 
 interface SchoolSidebarProps {
   schools: School[];
@@ -77,42 +76,18 @@ export function SchoolSidebar({
 
               <ScrollArea className="h-full pb-10">
                 <div className="space-y-2 pb-4">
+                  {schools.length === 0 && (
+                    <div className="flex-1">
+                      <p className="text-muted-foreground">Sin resultados</p>
+                    </div>
+                  )}
                   {schools.map((school) => (
-                    <Button
+                    <SidebarSchoolItem
                       key={school.id}
-                      variant={
-                        selectedSchool?.id === school.id ? "secondary" : "ghost"
-                      }
-                      className={cn(
-                        "w-full justify-start h-auto p-3 text-left hover:bg-neutral-200 dark:hover:bg-secondary",
-                        selectedSchool?.id === school.id &&
-                          "bg-neutral-200 dark:bg-secondary"
-                      )}
-                      onClick={() => onSelectSchool(school)}
-                    >
-                      <div className="flex items-start gap-3 w-full">
-                        <img
-                          src={school.imgUrl || "/placeholder.svg"}
-                          alt={school.name}
-                          className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
-                          onError={(e) => {
-                            e.currentTarget.src =
-                              "/placeholder.svg?height=40&width=40";
-                          }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-xs text-wrap line-clamp-2 mb-1">
-                            {school.name}
-                          </h3>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <MapPin className="h-3 w-3 flex-shrink-0" />
-                            <span className="truncate">
-                              {school.municipality}, {school.department}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </Button>
+                      school={school}
+                      selectedSchool={selectedSchool}
+                      onSelectSchool={onSelectSchool}
+                    />
                   ))}
                 </div>
               </ScrollArea>

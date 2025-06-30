@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { User } from "@/types/user";
+import { useSchoolStore } from "@/stores/school-store";
 
 type AuthState = {
   user: User | null;
@@ -14,10 +15,14 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       setUser: (user) => set({ user }),
-      clearUser: () => set({ user: null }),
+      clearUser: () => {
+        const schoolStore = useSchoolStore.getState();
+        schoolStore.reset(); 
+        set({ user: null });
+      },
     }),
     {
-      name: "auth-storage", // Key in localStorage
+      name: "auth-storage",
     }
   )
 );

@@ -9,6 +9,7 @@ import { SchoolSidebar } from "@/components/dashboard/users/school-sidebar";
 import { UsersContent } from "@/components/dashboard/users/users-content";
 
 import { useSchoolStore } from "@/stores/school-store";
+import { EmptyUsersState } from "@/components/dashboard/users/empty-users-state";
 
 export default function UsersPage() {
   const limit = 10;

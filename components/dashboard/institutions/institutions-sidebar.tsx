@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Pagination } from "@/components/common/pagination";
 import { SchoolListSkeleton } from "@/components/skeletons/schools/school-list-skeleton";
+import { SidebarSchoolItem } from "@/components/common/sidebar-school-item";
 
 interface InstitutionsSidebarProps {
   institutions: School[];
@@ -95,44 +96,12 @@ export function InstitutionsSidebar({
                     </div>
                   )}
                   {institutions.map((institution) => (
-                    <Button
+                    <SidebarSchoolItem
                       key={institution.id}
-                      variant={
-                        selectedInstitution?.id === institution.id
-                          ? "secondary"
-                          : "ghost"
-                      }
-                      className={cn(
-                        "w-full justify-start h-auto p-3 text-left hover:bg-neutral-200 dark:hover:bg-secondary",
-                        selectedInstitution?.id === institution.id &&
-                          "bg-neutral-200 dark:bg-secondary"
-                      )}
-                      onClick={() => onSelectInstitution(institution)}
-                    >
-                      <div className="flex items-start gap-3 w-full">
-                        <img
-                          src={institution.imgUrl || "/placeholder.svg"}
-                          alt={institution.name}
-                          className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
-                          onError={(e) => {
-                            e.currentTarget.src =
-                              "/placeholder.svg?height=40&width=40";
-                          }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-xs text-wrap line-clamp-2 mb-1">
-                            {institution.name}
-                          </h3>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <MapPin className="h-3 w-3 flex-shrink-0" />
-                            <span className="truncate">
-                              {institution.municipality},{" "}
-                              {institution.department}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </Button>
+                      school={institution}
+                      selectedSchool={selectedInstitution}
+                      onSelectSchool={onSelectInstitution}
+                    />
                   ))}
                 </div>
               </ScrollArea>

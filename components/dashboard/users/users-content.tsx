@@ -25,6 +25,7 @@ import { useSchoolStore } from "@/stores/school-store";
 import { Filters, User } from "@/types/school-users";
 import { SchoolStats } from "@/components/dashboard/users/school-stats";
 import { CardStatsSkeleton } from "@/components/skeletons/common/card-stats-skeleton";
+import { EmptyUsersState } from "./empty-users-state";
 
 interface UsersContentProps {
   schools: School[];
@@ -129,8 +130,13 @@ export function UsersContent({ schools, isLoadingSchools }: UsersContentProps) {
         {isLoadingSchools && !selectedSchool && <SchoolInfoSkeleton />}
 
         {/* School stats */}
-        {!isLoadingSchools && <SchoolStats stats={stats} />}
+        {!isLoadingSchools && schools.length > 0 && (
+          <SchoolStats stats={stats} />
+        )}
         {isLoadingSchools && <CardStatsSkeleton />}
+
+        {/* Empty state */}
+        {!isLoadingSchools && schools.length === 0 && !selectedSchool && <EmptyUsersState />}
 
         {/* Users table */}
         {selectedSchool && (
