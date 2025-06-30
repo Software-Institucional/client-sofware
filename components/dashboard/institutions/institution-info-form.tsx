@@ -1,11 +1,17 @@
 "use client";
 
 import type React from "react";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { useEffect, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+
 import {
   Select,
   SelectContent,
@@ -22,54 +28,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
+
+import api from "@/lib/axios";
 import { School } from "@/types/school";
-import { ImageUpload } from "./image-upload";
-import { useTransition } from "react";
+import { ImageUpload } from "@/components/dashboard/institutions/image-upload";
 import {
   institutionFormSchema,
   InstitutionFormValues,
 } from "@/schemas/institutions-schemas";
-import api from "@/lib/axios";
-import { AxiosError } from "axios";
-
-const DEPARTMENTS = [
-  "AMAZONAS",
-  "ANTIOQUIA",
-  "ARAUCA",
-  "ATLÁNTICO",
-  "BOLÍVAR",
-  "BOYACÁ",
-  "CALDAS",
-  "CAQUETÁ",
-  "CASANARE",
-  "CAUCA",
-  "CESAR",
-  "CHOCÓ",
-  "CÓRDOBA",
-  "CUNDINAMARCA",
-  "GUAINÍA",
-  "GUAVIARE",
-  "HUILA",
-  "LA GUAJIRA",
-  "MAGDALENA",
-  "META",
-  "NARIÑO",
-  "NORTE DE SANTANDER",
-  "PUTUMAYO",
-  "QUINDÍO",
-  "RISARALDA",
-  "SAN ANDRÉS Y PROVIDENCIA",
-  "SANTANDER",
-  "SUCRE",
-  "TOLIMA",
-  "VALLE DEL CAUCA",
-  "VAUPÉS",
-  "VICHADA",
-];
+import { DEPARTMENTS } from "@/constants/institutions";
 
 interface InstitutionInfoFormProps {
+  isModal?: boolean;
   institution?: School | null;
   mode: "create" | "edit";
   onSave: (institution: School) => void;
@@ -79,6 +49,7 @@ interface InstitutionInfoFormProps {
 }
 
 export default function InstitutionInfoForm({
+  isModal,
   institution,
   mode,
   onSave,
@@ -86,22 +57,36 @@ export default function InstitutionInfoForm({
   setImagePreview,
   sedes,
 }: InstitutionInfoFormProps) {
-  console.log("IMAGEN DEL COLEGIO: ", imagePreview);
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<InstitutionFormValues>({
     resolver: zodResolver(institutionFormSchema),
     defaultValues: {
-      name: institution?.name || "",
-      address: institution?.address || "",
-      phone: institution?.phone || "",
-      mail: institution?.mail || "",
-      website: institution?.website || "",
-      department: institution?.department || "",
-      municipality: institution?.municipality || "",
-      imgUrl: institution?.imgUrl || "",
+      name: mode === "edit" ? institution?.name ?? "" : "",
+      address: mode === "edit" ? institution?.address ?? "" : "",
+      phone: mode === "edit" ? institution?.phone ?? "" : "",
+      mail: mode === "edit" ? institution?.mail ?? "" : "",
+      website: mode === "edit" ? institution?.website ?? "" : "",
+      department: mode === "edit" ? institution?.department ?? "" : "",
+      municipality: mode === "edit" ? institution?.municipality ?? "" : "",
+      imgUrl: mode === "edit" ? institution?.imgUrl ?? "" : "",
     },
   });
+
+  useEffect(() => {
+    if (mode === "edit" && institution) {
+      form.reset({
+        name: institution.name,
+        address: institution.address,
+        phone: institution.phone,
+        mail: institution.mail,
+        website: institution.website,
+        department: institution.department,
+        municipality: institution.municipality,
+        imgUrl: institution.imgUrl,
+      });
+    }
+  }, [institution, mode, form]);
 
   const createInstitution = async (data: InstitutionFormValues) => {
     const formData = new FormData();
@@ -146,7 +131,7 @@ export default function InstitutionInfoForm({
       },
     });
 
-    return response.data;
+    return response.data.school;
   };
 
   const onSubmit = async (values: InstitutionFormValues) => {
@@ -173,7 +158,6 @@ export default function InstitutionInfoForm({
         });
       } catch (error) {
         const axiosError = error as AxiosError;
-        console.log("AXIOS ERROR: ", axiosError);
         let errorMessage = "Ocurrió un error inesperado";
         if (axiosError.response) {
           switch (axiosError.response.status) {
@@ -211,7 +195,7 @@ export default function InstitutionInfoForm({
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Imagen de la Institución</h3>
           <ImageUpload
-            imagePreview={imagePreview}
+            imagePreview={mode === "edit" ? imagePreview : ""}
             setImagePreview={setImagePreview}
             setFieldValue={form.setValue}
           />
@@ -320,7 +304,7 @@ export default function InstitutionInfoForm({
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Seleccionar departamento" />
                       </SelectTrigger>
                     </FormControl>
@@ -353,9 +337,15 @@ export default function InstitutionInfoForm({
         </div>
 
         <div className="flex justify-end gap-2 mt-6">
-          <Button type="button" variant="outline" onClick={() => form.reset()}>
-            Cancelar
-          </Button>
+          {isModal && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => form.reset()}
+            >
+              Cancelar
+            </Button>
+          )}
           <Button type="submit" disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {mode === "create" ? "Crear Institución" : "Guardar Cambios"}

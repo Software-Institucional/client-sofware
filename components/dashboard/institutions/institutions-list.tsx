@@ -21,7 +21,8 @@ import {
   Building2,
 } from "lucide-react";
 import { School } from "@/types/school";
-import { InstitutionCardSkeleton } from "../skeletons/schools/institution-card-skeleton";
+import { InstitutionCardSkeleton } from "../../skeletons/schools/institution-card-skeleton";
+import { EmptyInstitutionsState } from "./empty-institution-state";
 
 interface InstitutionsListProps {
   institutions: School[];
@@ -43,11 +44,12 @@ export function InstitutionsList({
   return (
     <>
       {institutions.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p>No se encontraron instituciones</p>
-          <p className="text-sm">Intenta con otros términos de búsqueda</p>
-        </div>
+        // <div className="text-center py-8 text-muted-foreground">
+        //   <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+        //   <p>No se encontraron instituciones</p>
+        //   {/* <p className="text-sm">Intenta con otros términos de búsqueda</p> */}
+        // </div>
+        <EmptyInstitutionsState />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {institutions.map((institution) => (

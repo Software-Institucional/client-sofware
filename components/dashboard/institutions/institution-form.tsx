@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { useEffect, useState } from "react";
+
 import {
   Dialog,
   DialogContent,
@@ -9,10 +10,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { School } from "@/types/school";
-import { SedesForm } from "./sedes-form";
-import InstitutionInfoForm from "./institution-info-form";
+import { SedesForm } from "@/components/dashboard/institutions/sedes-form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import InstitutionInfoForm from "@/components/dashboard/institutions/institution-info-form";
 
 interface InstitutionFormProps {
   isOpen: boolean;
@@ -35,8 +37,9 @@ export function InstitutionForm({
   const [sedes, setSedes] = useState<School["sedes"]>(institution?.sedes || []);
 
   useEffect(() => {
-    setImagePreview(institution?.imgUrl ?? "")
-  }, [institution?.imgUrl])
+    setSedes(institution?.sedes ?? []);
+    setImagePreview(institution?.imgUrl ?? "");
+  }, [institution?.imgUrl, institution?.sedes]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

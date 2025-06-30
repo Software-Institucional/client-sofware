@@ -1,9 +1,9 @@
 "use client";
 
-import { PageHeader } from "@/components/common/page-header";
-import { InstitutionForm } from "@/components/institutions/institution-form";
-import { InstitutionsList } from "@/components/institutions/institutions-list";
-import { Button } from "@/components/ui/button";
+import { Plus, Search } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
   Card,
   CardContent,
@@ -11,18 +11,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { PageHeader } from "@/components/common/page-header";
+import { Pagination } from "@/components/common/pagination";
+import { InstitutionForm } from "@/components/dashboard/institutions/institution-form";
+import InstitutionInfoForm from "@/components/dashboard/institutions/institution-info-form";
+import { InstitutionsList } from "@/components/dashboard/institutions/institutions-list";
+import { InstitutionsSidebar } from "@/components/dashboard/institutions/institutions-sidebar";
+import { SedesForm } from "@/components/dashboard/institutions/sedes-form";
+import InstitutionDetailsSkeleton from "@/components/skeletons/institutions/info-detail-skeleton";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { School } from "@/types/school";
 import { fetchSchools } from "@/utils/schools";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  Building2,
-  MapPin,
-  Plus,
-  School as SchoolIcon,
-  Search,
-} from "lucide-react";
-import React, { useState } from "react";
+import { EmptyInstitutionsState } from "@/components/dashboard/institutions/empty-institution-state";
 
 export default function InstitutionsPage() {
   const queryClient = useQueryClient();
@@ -32,6 +34,12 @@ export default function InstitutionsPage() {
     null
   );
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
+  const [sedes, setSedes] = useState<School["sedes"]>(
+    selectedInstitution?.sedes || []
+  );
+  const [imagePreview, setImagePreview] = useState<string>(
+    selectedInstitution?.imgUrl || ""
+  );
 
   const limit = 10;
   const [searchTerm, setSearchTerm] = useState("");
@@ -46,12 +54,17 @@ export default function InstitutionsPage() {
   const schools = paginatedData?.schools ?? [];
   const totalPages = paginatedData?.totalPages ?? 1;
 
-  const stats = {
-    total: 10,
-    totalSedes: 20,
-    departments: 32,
-    municipalities: 6,
-  };
+  // Auto-select the first school if one is not already selected
+  useEffect(() => {
+    if (schools.length > 0 && !selectedInstitution) {
+      setSelectedInstitution(schools[0]);
+    }
+
+    if (selectedInstitution) {
+      setSedes(selectedInstitution.sedes);
+      setImagePreview(selectedInstitution.imgUrl);
+    }
+  }, [schools, selectedInstitution, setSelectedInstitution]);
 
   const handleEditInstitution = (institution: School) => {
     setSelectedInstitution(institution);
@@ -64,66 +77,103 @@ export default function InstitutionsPage() {
   };
 
   // Function to invalidate query after saving
-  const handleSave = () => {
+  const handleSave = (updatedInstitution: School) => {
     queryClient.invalidateQueries({ queryKey: ["schools"] }); // Invalidate all schools queries
     setIsFormOpen(false);
+    setSelectedInstitution(updatedInstitution);
   };
 
   const handleFormOpenChange = (isOpen: boolean) => {
     setIsFormOpen(isOpen);
-    setSelectedInstitution(null);
   };
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.16))] max-sm:pb-10 space-y-6 overflow-y-auto p-6">
+    <div className="h-[calc(100vh-theme(spacing.16))] max-lg:overflow-y-auto flex flex-col max-sm:pb-10 max-lg:p-5">
+      <div className="hidden lg:flex flex-col lg:flex-row h-full">
+        {/* Only for desktop view */}
+        <InstitutionsSidebar
+          institutions={schools}
+          currentPage={currentPage}
+          isLoadingInstitutions={isLoadingSchools}
+          searchTerm={searchTerm}
+          onSelectInstitution={setSelectedInstitution}
+          selectedInstitution={selectedInstitution}
+          totalPages={totalPages}
+          onSearch={setSearchTerm}
+          onPageChange={setCurrentPage}
+          onNewInstitutionChange={() => {
+            setFormMode("create");
+            setIsFormOpen(true);
+          }}
+        />
+
+        {/* Institution edit form - desktop view  */}
+        {isLoadingSchools && !selectedInstitution ? (
+          <InstitutionDetailsSkeleton />
+        ) : (
+          <div className="flex-1 h-full space-y-6 overflow-y-auto p-5">
+            {schools.length === 0 ? (
+              <EmptyInstitutionsState />
+            ) : (
+              <>
+                <PageHeader
+                  title={`Actualiza la información de ${selectedInstitution?.name.toUpperCase()}`}
+                  description="Administra la información de la institutioón, así como sus sedes."
+                />
+                <Tabs defaultValue="general" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="general">
+                      Información General
+                    </TabsTrigger>
+                    <TabsTrigger value="sedes">Sedes</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="general" className="space-y-6 mt-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-2xl">
+                          Información del colegio
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <InstitutionInfoForm
+                          institution={selectedInstitution}
+                          mode="edit"
+                          onSave={handleSave}
+                          imagePreview={imagePreview}
+                          setImagePreview={setImagePreview}
+                          sedes={selectedInstitution?.sedes ?? []}
+                        />
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+
+                  <TabsContent value="sedes" className="space-y-6 mt-6">
+                    <Card>
+                      <CardContent>
+                        <SedesForm
+                          institution={selectedInstitution}
+                          sedes={sedes}
+                          setSedes={setSedes}
+                        />
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
       <PageHeader
         title="Gestión de Instituciones"
-        description="Administra las instituciones educativas y sus sedes"
+        description="Administra las instituciones educativas y sus sedes."
+        className="mb-4 block lg:hidden"
       />
-      {/* Estadísticas */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Instituciones
-            </CardTitle>
-            <SchoolIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Sedes</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalSedes}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Departamentos</CardTitle>
-            <MapPin className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.departments}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Municipios</CardTitle>
-            <MapPin className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.municipalities}</div>
-          </CardContent>
-        </Card>
-      </div> */}
 
-      {/* Botón para crear nueva institución */}
-      <Card>
+      {/* Institutions list - Mobile view */}
+      <Card className="block lg:hidden">
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
@@ -164,11 +214,19 @@ export default function InstitutionsPage() {
               onDelete={handleDeleteInstitution}
               loading={isLoadingSchools}
             />
+
+            <div className="py-2">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Modal form */}
+      {/* Modal form - Mobile view */}
       <InstitutionForm
         institution={selectedInstitution}
         isOpen={isFormOpen}

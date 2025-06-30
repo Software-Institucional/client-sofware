@@ -43,7 +43,7 @@ export function ImageUpload({
   };
 
   return (
-    <div className="flex items-center gap-6 p-4 bg-gray-50 rounded-xl dark:bg-input/30">
+    <div className="flex flex-row lg:flex-col xl:flex-row items-center gap-6 p-4 bg-gray-50 rounded-xl dark:bg-input/30">
       <div
         className="relative group"
         onClick={() => fileInputRef.current?.click()}

@@ -1,13 +1,18 @@
 "use client";
 
+import { toast } from "sonner";
 import type React from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
+import { Building2, MapPin, Phone, Trash2, Plus, Loader2 } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import {
   Form,
   FormControl,
@@ -16,12 +21,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Building2, MapPin, Phone, Trash2, Plus, Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import { School, Sede } from "@/types/school";
-import { useState } from "react";
-import { sedeFormSchema, SedeFormValues } from "@/schemas/institutions-schemas";
+
 import api from "@/lib/axios";
+import { School, Sede } from "@/types/school";
+import { sedeFormSchema, SedeFormValues } from "@/schemas/institutions-schemas";
 
 interface SedesFormProps {
   institution?: School | null;
@@ -83,6 +86,7 @@ export function SedesForm({ institution, sedes, setSedes }: SedesFormProps) {
         description: "La sede se ha creado exitosamente",
       });
     } catch (error) {
+      console.log("SEDES ERROR: ", error);
       toast.error("Error", {
         description: "No se pudo crear la sede",
       });
@@ -113,8 +117,8 @@ export function SedesForm({ institution, sedes, setSedes }: SedesFormProps) {
         </h3>
         {sedes.length > 0 ? (
           <div className="space-y-3">
-            {sedes.map((sede) => (
-              <Card key={sede.id}>
+            {sedes.map((sede, i) => (
+              <Card key={i}>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base">{sede.name}</CardTitle>
@@ -160,7 +164,7 @@ export function SedesForm({ institution, sedes, setSedes }: SedesFormProps) {
         )}
       </div>
 
-      <Separator />
+      <Separator className="my-5" />
 
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Agregar Nueva Sede</h3>
