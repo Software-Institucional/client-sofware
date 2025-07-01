@@ -26,7 +26,7 @@ import { School } from "@/types/school";
 import { fetchSchools } from "@/utils/schools";
 import { EmptyInstitutionsState } from "@/components/dashboard/institutions/empty-institution-state";
 
-export default function InstitutionsPage() {
+export function SuperAdminInstitutionsView() {
   const queryClient = useQueryClient();
 
   const [isFormOpen, setIsFormOpen] = useState(false);

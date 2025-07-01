@@ -38,7 +38,6 @@ export async function fetchSchoolUsers(
   activeUsers: number;
 }> {
   try {
-    console.log("Fn filters: ", filters)
     const response = await api.get(`/auth/view-registered`, {
       params: {
         schoolId,

@@ -4,14 +4,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface SchoolStatsProps {
   stats: { value: number; label: string }[];
+  className?: string;
 }
 
-export function SchoolStats({ stats }: SchoolStatsProps) {
+export function SchoolStats({ stats, className }: SchoolStatsProps) {
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className={cn("flex flex-wrap gap-4", className)}>
       {stats.map((stat, idx) => (
         <Card
           key={idx}

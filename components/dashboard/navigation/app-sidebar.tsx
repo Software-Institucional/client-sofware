@@ -6,7 +6,7 @@ import Link from "next/link";
 import { NavMain } from "@/components/dashboard/navigation/nav-main";
 import { NavUser } from "@/components/dashboard/navigation/nav-user";
 import { NavSecondary } from "@/components/dashboard/navigation/nav-secondary";
-import { NavDocuments } from "@/components/dashboard/navigation/nav-documents";
+import { NavAdministration } from "@/components/dashboard/navigation/nav-administration";
 import {
   Sidebar,
   SidebarContent,
@@ -18,8 +18,16 @@ import {
 } from "@/components/ui/sidebar";
 import { Logo } from "@/components/common/logo";
 import { data } from "@/constants/navigation";
+import { useAuthStore } from "@/stores/auth-store";
+import { NavAdministrationSkeleton } from "@/components/skeletons/navigation/nav-administration-skeleton";
+
+const adminRoles = ["SUPER", "ADMIN"];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuthStore();
+
+  const showAdministrationRoutes = adminRoles.includes(user?.role ?? "");
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -38,11 +46,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+        {!user ? (
+          <NavAdministrationSkeleton size={data.administration.length} />
+        ) : showAdministrationRoutes && (
+          <NavAdministration items={data.administration} />
+        )}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );

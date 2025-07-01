@@ -24,11 +24,13 @@ import {
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnHeader } from "@/components/common/column-header";
 import { Filters, User } from "@/types/school-users";
+import { useAuthStore } from "@/stores/auth-store";
+import { cn } from "@/lib/utils";
 
 interface SchoolUsersTableProps {
   users: User[];
   onEditUser: (user: User) => void;
-  onDeleteUser: (userId: string) => void;
+  onDeleteUser: (user: User) => void;
   pageIndex: number;
   onPageChange: (page: number) => void;
   pageCount: number;
@@ -56,6 +58,8 @@ export function SchoolUsersTable({
   searchQuery,
   isLoadingUsers,
 }: SchoolUsersTableProps) {
+  const { user: authUser } = useAuthStore();
+
   const uniqueRoles = Array.from(new Set(users.map((user) => user.role)));
   const roleOptions = uniqueRoles.map((role) => ({
     label: role,
@@ -173,10 +177,15 @@ export function SchoolUsersTable({
                   <Edit className="mr-2 h-4 w-4" />
                   Editar
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator
+                  className={cn(authUser?.role !== "SUPER" && "hidden")}
+                />
                 <DropdownMenuItem
-                  onClick={() => onDeleteUser(user.id)}
-                  className="text-red-600"
+                  onClick={() => onDeleteUser(user)}
+                  className={cn(
+                    "text-red-600",
+                    authUser?.role !== "SUPER" && "hidden"
+                  )}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
                   Eliminar
@@ -204,7 +213,6 @@ export function SchoolUsersTable({
       pageCount={pageCount}
       pageSize={pageSize}
       onPageSizeChange={onPageSizeChange}
-      // Estas 4 props son obligatorias ahora
       searchQuery={searchQuery}
       onSearchQueryChange={onSearchQueryChange}
       filters={filters}

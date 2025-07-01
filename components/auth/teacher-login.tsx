@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth-store";
 import { FormWrapper } from "@/components/auth/form-wrapper";
 import { AnimatedInputWrapper } from "@/components/auth/animated-input-wrapper";
+import { useInstitutionStore } from "@/stores/institution-store";
 
 interface TeacherLoginProps {
   school: School;
@@ -43,6 +44,7 @@ export function TeacherLogin({
   handleBackToSearch,
 }: TeacherLoginProps) {
   const router = useRouter();
+  const setSchool = useInstitutionStore((state) => state.setInstitution);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -70,10 +72,12 @@ export function TeacherLogin({
 
       const result = response.data;
       setUser(result.user);
+      setSchool(school); // guarda todo el objeto School
 
       router.replace("/dashboard");
       form.reset();
     } catch (error) {
+      console.log(error)
       if (error instanceof AxiosError) {
         const status = error.response?.status;
         const message =

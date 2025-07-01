@@ -39,6 +39,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { useSchoolStore } from "@/stores/school-store";
 import { SedeSelector } from "@/components/dashboard/users/sede-selector";
 import { SchoolSelector } from "@/components/dashboard/users/school-selector";
+import { useInstitutionStore } from "@/stores/institution-store";
 
 const formSchema = z.object({
   firstName: z.string().trim().min(1, "Requerido"),
@@ -66,9 +67,12 @@ export function UserFormDialog({
   const queryClient = useQueryClient();
   const { user: authUser } = useAuthStore();
   const { selectedSchool } = useSchoolStore();
+  const { institution } = useInstitutionStore();
 
-  const [currentSelectedSchool, setCurrentSelectedSchool] =
-    useState(selectedSchool);
+  const [currentSelectedSchool, setCurrentSelectedSchool] = useState(
+    authUser?.role === "SUPER" ? selectedSchool : institution
+  );
+
   const [isPending, startTransition] = useTransition();
   const [searchTerm, setSearchTerm] = useState("");
   const limit = 10;
@@ -105,13 +109,37 @@ export function UserFormDialog({
         sedeId: user.sedes?.id ?? "",
         schoolId: currentSelectedSchool?.id,
       });
+    } else if (mode === "create") {
+      form.reset({
+        firstName: "",
+        lastName: "",
+        email: "",
+        role: "",
+        activate: true,
+        sedeId: "",
+        schoolId: currentSelectedSchool?.id,
+      });
     }
-  }, [user, mode, form]);
+  }, [user, mode, form, institution, selectedSchool]);
+
+  // Actualiza el valor dependiendo del rol
+  useEffect(() => {
+    if (authUser?.role === "SUPER") {
+      setCurrentSelectedSchool(selectedSchool);
+    } else {
+      setCurrentSelectedSchool(institution);
+    }
+  }, [authUser?.role, selectedSchool, institution]);
 
   useEffect(() => {
     if (isOpen) {
       setSearchTerm("");
-      setCurrentSelectedSchool(user?.school ?? selectedSchool);
+
+      const fallbackSchool =
+        authUser?.role === "SUPER" ? selectedSchool : institution;
+      const initialSchool = user?.school ?? fallbackSchool;
+
+      setCurrentSelectedSchool(initialSchool);
 
       form.reset({
         firstName: user?.firstName || "",
@@ -119,11 +147,11 @@ export function UserFormDialog({
         email: user?.email || "",
         role: user?.role || "",
         activate: user?.activate ?? true,
-        schoolId: user?.school?.id ?? selectedSchool?.id ?? "",
+        schoolId: user?.school?.id ?? currentSelectedSchool?.id ?? "",
         sedeId: user?.sedes?.id ?? "",
       });
     }
-  }, [isOpen, user]);
+  }, [isOpen, user, selectedSchool, institution, authUser?.role]);
 
   const { isValid } = form.formState;
 
@@ -161,7 +189,7 @@ export function UserFormDialog({
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     startTransition(async () => {
       try {
-        if (!selectedSchool) return;
+        if (!currentSelectedSchool) return;
 
         if (mode === "create") {
           await createUser(values);
@@ -172,7 +200,7 @@ export function UserFormDialog({
         }
 
         await queryClient.invalidateQueries({
-          queryKey: ["schoolUsers", selectedSchool.id],
+          queryKey: ["schoolUsers", currentSelectedSchool?.id],
         });
 
         onOpenChange(false);
@@ -182,7 +210,7 @@ export function UserFormDialog({
           email: user?.email || "",
           role: user?.role || "",
           activate: user?.activate ?? true,
-          schoolId: user?.school?.id ?? selectedSchool?.id ?? "",
+          schoolId: user?.school?.id ?? currentSelectedSchool?.id ?? "",
           sedeId: user?.sedes?.id ?? "",
         });
       } catch (error) {
@@ -200,7 +228,7 @@ export function UserFormDialog({
       title={mode === "create" ? "Agregar nuevo usuario" : "Editar usuario"}
       description={
         mode === "create"
-          ? `Completa la información del nuevo usuario para ${selectedSchool?.name}`
+          ? `Completa la información del nuevo usuario para ${currentSelectedSchool?.name}`
           : "Modifica la información del usuario"
       }
       isOpen={isOpen}
@@ -300,7 +328,7 @@ export function UserFormDialog({
                 )}
               />
 
-              {mode === "edit" && (
+              {mode === "edit" && authUser?.role === "SUPER" && (
                 <FormField
                   control={form.control}
                   name="schoolId"
