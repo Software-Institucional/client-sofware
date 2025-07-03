@@ -636,6 +636,10 @@ body {
   .card-gradient-dark {
     @apply bg-gradient-to-br from-[#0d0d0d] via-[#111111] to-[#1a1a1a];
   }
+
+  .h-dynamic{
+    @apply h-[calc(100dvh-theme(spacing.16))];
+  }
 }
 
 /* Font families */

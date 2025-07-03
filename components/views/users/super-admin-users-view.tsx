@@ -35,7 +35,7 @@ export function SuperAdminUsersView() {
   }, [schools, selectedSchool, setSelectedSchool]);
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.16))] flex flex-col max-sm:pb-10">
+    <div className="h-dynamic flex flex-col">
       <div className="flex flex-col lg:flex-row h-full">
         <SchoolSidebar
           schools={schools}

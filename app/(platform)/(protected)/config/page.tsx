@@ -30,11 +30,11 @@ export default function ConfigPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.16))] flex flex-col">
+    <div className="h-dynamic flex flex-col">
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
-        className="h-full flex flex-col overflow-y-auto lg:overflow-y-hidden"
+        className="h-full flex flex-col overflow-y-auto lg:overflow-y-hidden rounded-bl-xl"
       >
         <div className="flex flex-col lg:flex-row gap-4 h-full">
           {/* Sidebar Navigation */}
@@ -77,12 +77,12 @@ export default function ConfigPage() {
           <div className="flex-1 h-full lg:overflow-y-auto">
             <TabsContent
               value="account"
-              className="min-h-full pb-10 sm:pb-0"
+              className="min-h-full py-5"
             ></TabsContent>
 
             <TabsContent
               value="appearance"
-              className="min-h-full space-y-6 py-10 sm:py-5"
+              className="min-h-full space-y-6 py-5"
             >
               <AppearanceSettings />
               <ThemeColorPicker />
@@ -97,7 +97,7 @@ export default function ConfigPage() {
 
             <TabsContent
               value="notifications"
-              className="min-h-full pb-10 sm:pb-0"
+              className="min-h-full py-5"
             ></TabsContent>
           </div>
         </div>

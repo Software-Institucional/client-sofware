@@ -15,9 +15,9 @@ export default function DashboardLayout({
       <ApplyThemeClass />
       <SidebarProvider>
         <AppSidebar variant="inset" />
-        <SidebarInset className="flex flex-col">
+        <SidebarInset>
           <SiteHeader />
-          <div className="flex-1 overflow-hidden">{children}</div>
+          <div className="overflow-hidden">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </>

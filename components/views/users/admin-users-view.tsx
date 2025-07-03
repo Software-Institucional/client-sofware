@@ -130,8 +130,8 @@ export function AdminUsersView() {
   };
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.16))] flex flex-col">
-      <div className="flex-1 h-full space-y-6 overflow-y-auto p-6 max-sm:pb-10">
+    <div className="h-dynamic flex flex-col">
+      <div className="flex-1 h-full space-y-6 overflow-y-auto p-6">
         <PageHeader
           title="Gestión de Usuarios"
           description="Crea accesos al sistema para tu institución o edita la informacion de los usuarios."

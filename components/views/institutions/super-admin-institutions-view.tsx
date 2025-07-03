@@ -88,7 +88,7 @@ export function SuperAdminInstitutionsView() {
   };
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.16))] max-lg:overflow-y-auto flex flex-col max-sm:pb-10 max-lg:p-5">
+    <div className="h-dynamic max-lg:overflow-y-auto flex flex-col">
       <div className="hidden lg:flex flex-col lg:flex-row h-full">
         {/* Only for desktop view */}
         <InstitutionsSidebar
@@ -175,7 +175,7 @@ export function SuperAdminInstitutionsView() {
       {/* Institutions list - Mobile view */}
       <Card className="block lg:hidden">
         <CardHeader>
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-between sm:items-center pb-2">
             <div>
               <CardTitle className="text-2xl">
                 Instituciones Educativas
