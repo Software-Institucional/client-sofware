@@ -64,7 +64,7 @@ export function InstitutionsSidebar({
           </div>
           <Button
             variant="secondary"
-            className="mt-2"
+            className="mt-2 bg-accent-foreground/10 hover:bg-accent-foreground/15 dark:bg-secondary dark:hover:bg-secondary/80"
             onClick={onNewInstitutionChange}
           >
             <Plus /> Nueva institución

@@ -88,7 +88,7 @@ export function SuperAdminInstitutionsView() {
   };
 
   return (
-    <div className="h-dynamic max-lg:overflow-y-auto flex flex-col">
+    <div className="h-dynamic max-lg:overflow-y-auto flex flex-col max-lg:p-5">
       <div className="hidden lg:flex flex-col lg:flex-row h-full">
         {/* Only for desktop view */}
         <InstitutionsSidebar

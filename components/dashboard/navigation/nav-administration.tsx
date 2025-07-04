@@ -9,6 +9,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/stores/auth-store";
 
 export function NavAdministration({
   items,
@@ -19,6 +21,8 @@ export function NavAdministration({
     icon: LucideIcon;
   }[];
 }) {
+  const { user } = useAuthStore()
+  console.log(user?.role)
   const pathname = usePathname();
 
   return (
@@ -26,7 +30,12 @@ export function NavAdministration({
       <SidebarGroupLabel>Administración</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
-          <SidebarMenuItem key={item.name}>
+          <SidebarMenuItem
+            key={item.name}
+            className={cn(
+              user?.role === "ADMIN" && item.url === "/institutions" && "hidden"
+            )}
+          >
             <SidebarMenuButton
               asChild
               tooltip={item.name}

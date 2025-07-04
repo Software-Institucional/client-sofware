@@ -95,10 +95,10 @@ export default function ConfigPage() {
               </div>
             </TabsContent>
 
-            <TabsContent
+            {/* <TabsContent
               value="notifications"
               className="min-h-full py-5"
-            ></TabsContent>
+            ></TabsContent> */}
           </div>
         </div>
       </Tabs>

@@ -1,27 +1,12 @@
 import {
-  BarChartIcon,
-  CameraIcon,
-  ClipboardListIcon,
-  DatabaseIcon,
-  FileCodeIcon,
-  FileIcon,
-  FileTextIcon,
-  FolderIcon,
   HelpCircleIcon,
   LayoutDashboardIcon,
-  ListIcon,
   School,
-  SearchIcon,
   SettingsIcon,
   UsersIcon,
 } from "lucide-react";
 
 export const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Inicio",

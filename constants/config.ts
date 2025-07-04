@@ -13,12 +13,12 @@ export const settingsTabs = [
     icon: Palette,
     description: "Personaliza el tema y la interfaz",
   },
-  {
-    value: "notifications",
-    label: "Notificaciones",
-    icon: Bell,
-    description: "Configura tus preferencias de notificaciones",
-  },
+  // {
+  //   value: "notifications",
+  //   label: "Notificaciones",
+  //   icon: Bell,
+  //   description: "Configura tus preferencias de notificaciones",
+  // },
 ];
 
 export const themeOptions = [

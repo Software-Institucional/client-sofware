@@ -130,13 +130,13 @@ export function AdminUsersView() {
   };
 
   return (
-    <div className="h-dynamic flex flex-col">
+    <div className="h-dynamic flex flex-col max-w-[2000px] mx-auto">
       <div className="flex-1 h-full space-y-6 overflow-y-auto p-6">
         <PageHeader
           title="Gestión de Usuarios"
           description="Crea accesos al sistema para tu institución o edita la informacion de los usuarios."
         />
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col lg:flex-row justify-between gap-4">
           {institution && <SchoolInfo school={institution} />}
           {/* School stats */}
           {!isLoadingUsers && (

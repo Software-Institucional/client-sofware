@@ -91,7 +91,9 @@ export function UserFormDialog({
       firstName: user?.firstName || "",
       lastName: user?.lastName || "",
       email: user?.email || "",
-      role: user?.role || "",
+      role:
+        user?.role ??
+        (mode === "create" && authUser?.role === "ADMIN" ? "DOCENTE" : ""),
       activate: user?.activate ?? true,
       schoolId: currentSelectedSchool?.id,
       sedeId: user?.sedes?.id ?? "",
@@ -114,7 +116,7 @@ export function UserFormDialog({
         firstName: "",
         lastName: "",
         email: "",
-        role: "",
+        role: authUser?.role === "ADMIN" ? "DOCENTE" : "",
         activate: true,
         sedeId: "",
         schoolId: currentSelectedSchool?.id,
@@ -145,7 +147,9 @@ export function UserFormDialog({
         firstName: user?.firstName || "",
         lastName: user?.lastName || "",
         email: user?.email || "",
-        role: user?.role || "",
+        role:
+          user?.role ??
+          (mode === "create" && authUser?.role === "ADMIN" ? "DOCENTE" : ""),
         activate: user?.activate ?? true,
         schoolId: user?.school?.id ?? currentSelectedSchool?.id ?? "",
         sedeId: user?.sedes?.id ?? "",
@@ -303,7 +307,7 @@ export function UserFormDialog({
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Información Académica</h3>
 
-              <FormField
+              {authUser?.role === "SUPER" && <FormField
                 control={form.control}
                 name="role"
                 render={({ field }) => (
@@ -326,7 +330,7 @@ export function UserFormDialog({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              />}
 
               {mode === "edit" && authUser?.role === "SUPER" && (
                 <FormField
@@ -423,7 +427,7 @@ export function UserFormDialog({
               >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isPending || !isValid}>
+              <Button type="submit" disabled={isPending || !isValid || authUser?.role === "ADMIN" && !form.watch("sedeId")}>
                 {isPending && <Loader className="animate-spin" />}
                 {mode === "create" ? "Crear usuario" : "Guardar cambios"}
               </Button>

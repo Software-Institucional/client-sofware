@@ -1,4 +1,4 @@
-import { SchoolData } from "./school";
+import { School, SchoolData } from "./school";
 
 export interface PaginatedResponse {
   schools: SchoolData[];
